@@ -3,3 +3,34 @@
  * Do NOT add Stitch page styles here.
  * Per-feature styles belong in: app/features/<name>/styles/
  */
+
+/* Material Symbols icon font settings */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  user-select: none;
+}
+
+/* Ensure full-height layout baseline */
+html,
+body {
+  height: 100%;
+}
+
+/*
+ * Box-sizing fix: preflight is disabled to preserve Stitch styles,
+ * but we still need border-box so `w-full` + padding doesn't overflow.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

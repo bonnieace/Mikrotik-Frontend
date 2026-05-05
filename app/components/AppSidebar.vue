@@ -7,37 +7,37 @@
     </div>
 
     <!-- Nav items -->
-    <nav class="flex-1 px-3 space-y-1">
+    <nav class="flex-1 px-3 space-y-1 overflow-y-auto custom-scrollbar">
       <NuxtLink
         v-for="item in navItems"
         :key="item.to"
         :to="item.to"
-        class="flex items-center px-3 py-2 text-sm font-medium tracking-tight transition-all"
         :class="isActive(item.to)
-          ? 'bg-slate-200/50 text-slate-900 border-r-2 border-blue-600'
-          : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'"
+          ? 'flex items-center px-3 py-2 bg-slate-200/50 text-slate-900 border-r-2 border-blue-600 font-inter text-sm font-medium tracking-tight transition-transform active:scale-[0.98]'
+          : 'flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-inter text-sm font-medium tracking-tight transition-colors duration-150'"
       >
-        <span class="material-symbols-outlined mr-3 text-[20px]">{{ item.icon }}</span>
+        <span class="material-symbols-outlined mr-3">{{ item.icon }}</span>
         {{ item.label }}
       </NuxtLink>
     </nav>
 
     <!-- Bottom actions -->
-    <div class="px-3 mt-auto pt-6 border-t border-slate-200 space-y-1">
+    <div class="px-3 mt-auto pt-6 border-t border-slate-200">
       <a
         href="#"
-        class="flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-sm font-medium tracking-tight transition-colors rounded"
+        class="flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-inter text-sm font-medium tracking-tight transition-colors duration-150"
       >
-        <span class="material-symbols-outlined mr-3 text-[20px]">help_outline</span>
+        <span class="material-symbols-outlined mr-3">help_outline</span>
         Support
       </a>
-      <button
-        class="w-full flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-sm font-medium tracking-tight transition-colors rounded"
-        @click="handleLogout"
+      <a
+        href="#"
+        class="flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-inter text-sm font-medium tracking-tight transition-colors duration-150"
+        @click.prevent="handleLogout"
       >
-        <span class="material-symbols-outlined mr-3 text-[20px]">logout</span>
+        <span class="material-symbols-outlined mr-3">logout</span>
         Logout
-      </button>
+      </a>
     </div>
   </aside>
 </template>

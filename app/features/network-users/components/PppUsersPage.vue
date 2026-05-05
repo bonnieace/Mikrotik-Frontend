@@ -4,16 +4,16 @@
   DO NOT redesign. Pixel-perfect match required.
 -->
 <template>
-  <div class="p-lg max-w-container-max mx-auto">
+  <div class="p-md sm:p-lg max-w-container-max mx-auto">
 
     <!-- Header -->
-    <header class="mb-xl flex items-center justify-between">
+    <header class="mb-xl flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h2 class="font-h1 text-h1 text-on-background">PPP User Management</h2>
         <p class="font-body-md text-on-surface-variant">Administer active Point-to-Point protocol sessions and subscribers.</p>
       </div>
-      <div class="flex gap-3">
-        <button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-h3 text-h3 hover:opacity-90 transition-opacity">
+      <div class="flex w-full sm:w-auto gap-3">
+        <button class="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-h3 text-h3 hover:opacity-90 transition-opacity">
           <span class="material-symbols-outlined text-[20px]">add</span>
           New User
         </button>
@@ -138,12 +138,12 @@
       </div>
 
       <!-- Active Sessions Pagination -->
-      <div v-if="activeSessions.length > 0" class="px-md py-sm bg-slate-50 border-t border-outline-variant flex items-center justify-between">
+      <div v-if="activeSessions.length > 0" class="px-md py-sm bg-slate-50 border-t border-outline-variant flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span class="font-body-sm text-on-surface-variant">
           Showing <span class="font-bold text-on-surface">{{ activePaginationStart }}–{{ activePaginationEnd }}</span>
           of <span class="font-bold text-on-surface">{{ activeSessions.length.toLocaleString() }}</span> sessions
         </span>
-        <div class="flex gap-2 items-center">
+        <div class="flex gap-2 items-center flex-wrap">
           <button
             class="p-1 border border-outline-variant rounded bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="activeCurrentPage === 1"
@@ -180,7 +180,7 @@
 
     <!-- Filter Bar -->
     <section class="bg-white border border-outline-variant rounded-t-xl p-md flex flex-wrap items-center gap-md">
-      <div class="flex-1 min-w-[300px]">
+      <div class="flex-1 min-w-0 sm:min-w-[300px] w-full">
         <div class="relative group">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">person_search</span>
           <input
@@ -218,7 +218,7 @@
     <Transition name="drawer">
       <aside
         v-if="showFilters"
-        class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 flex flex-col"
+        class="fixed top-0 right-0 h-full w-full max-w-sm bg-white shadow-2xl z-50 flex flex-col"
       >
         <!-- Drawer Header -->
         <div class="flex items-center justify-between px-lg py-md border-b border-outline-variant">
@@ -394,12 +394,12 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="filteredUsers.length > 0" class="px-md py-sm bg-slate-50 border-t border-outline-variant flex items-center justify-between">
+      <div v-if="filteredUsers.length > 0" class="px-md py-sm bg-slate-50 border-t border-outline-variant flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span class="font-body-sm text-on-surface-variant">
           Showing <span class="font-bold text-on-surface">{{ paginationStart }}–{{ paginationEnd }}</span>
           of <span class="font-bold text-on-surface">{{ filteredUsers.length.toLocaleString() }}</span> users
         </span>
-        <div class="flex gap-2 items-center">
+        <div class="flex gap-2 items-center flex-wrap">
           <button
             class="p-1 border border-outline-variant rounded bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="currentPage === 1"
@@ -430,13 +430,13 @@
     </section>
 
     <!-- Bottom section -->
-    <section class="mt-xl grid grid-cols-1 lg:grid-cols-3 gap-lg" style="grid-template-columns: 2fr 1fr">
-      <div class="lg:col-span-2 bg-primary-container p-lg rounded-xl text-on-primary flex items-center gap-lg">
+    <section class="mt-xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-lg">
+      <div class="bg-primary-container p-lg rounded-xl text-on-primary flex flex-col sm:flex-row sm:items-center gap-lg">
         <div class="flex-1">
           <h3 class="font-h2 text-h2 mb-xs">Manage High-Traffic Profiles</h3>
           <p class="font-body-md opacity-80 max-w-lg">Identified profiles consuming over 80% of bandwidth. Consider reviewing their traffic shaping rules or upgrading their service plan.</p>
         </div>
-        <button class="px-4 py-2 border border-white/20 rounded-lg font-h3 text-h3 hover:bg-white/10 transition-colors shrink-0">View Report</button>
+        <button class="w-full sm:w-auto px-4 py-2 border border-white/20 rounded-lg font-h3 text-h3 hover:bg-white/10 transition-colors shrink-0">View Report</button>
       </div>
       <div class="bg-surface-container-high p-lg rounded-xl flex flex-col justify-between">
         <div>

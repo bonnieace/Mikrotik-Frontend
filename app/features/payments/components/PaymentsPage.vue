@@ -1,18 +1,18 @@
 <template>
-  <div class="p-lg max-w-container-max mx-auto">
+  <div class="p-md sm:p-lg max-w-container-max mx-auto">
 
     <!-- Page Header -->
-    <div class="flex items-end justify-between mb-xl">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-xl">
       <div>
         <h2 class="font-h1 text-h1 text-on-background">Payments &amp; Logs</h2>
         <p class="font-body-md text-on-surface-variant">Real-time overview of infrastructure billing cycles and transaction records.</p>
       </div>
-      <div class="flex gap-sm">
-        <button class="flex items-center gap-2 bg-white border border-outline-variant px-md py-2 rounded-lg shadow-sm hover:bg-slate-50 transition-all font-body-md text-on-surface font-medium">
+      <div class="flex w-full sm:w-auto gap-sm flex-col sm:flex-row">
+        <button class="w-full sm:w-auto justify-center flex items-center gap-2 bg-white border border-outline-variant px-md py-2 rounded-lg shadow-sm hover:bg-slate-50 transition-all font-body-md text-on-surface font-medium">
           <span class="material-symbols-outlined text-[18px]">download</span>
           Export CSV
         </button>
-        <button class="flex items-center gap-2 bg-primary text-on-primary px-md py-2 rounded-lg shadow-sm hover:opacity-90 transition-all font-body-md font-medium">
+        <button class="w-full sm:w-auto justify-center flex items-center gap-2 bg-primary text-on-primary px-md py-2 rounded-lg shadow-sm hover:opacity-90 transition-all font-body-md font-medium">
           <span class="material-symbols-outlined text-[18px]">add</span>
           Manual Transaction
         </button>
@@ -20,7 +20,7 @@
     </div>
 
     <!-- Stat Cards -->
-    <div class="grid grid-cols-4 gap-lg mb-xl">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-lg mb-xl">
 
       <!-- Today Hotspot Total -->
       <div class="bg-white p-md border border-slate-200 rounded-xl flex flex-col gap-2">
@@ -113,7 +113,7 @@
         </select>
       </div>
 
-      <div class="flex-1 flex items-end justify-end gap-sm">
+      <div class="w-full sm:flex-1 flex items-end sm:justify-end gap-sm">
         <button
           class="bg-slate-100 text-on-surface px-md py-2 rounded-lg font-body-sm font-semibold hover:bg-slate-200 transition-colors"
           @click="statusFilter = ''; userTypeFilter = ''; dateRange = ''; currentPage = 1; fetchTransactions()"
@@ -131,7 +131,8 @@
 
     <!-- Transaction Table -->
     <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm mb-lg">
-      <table class="w-full text-left border-collapse">
+      <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse min-w-[780px]">
         <thead class="bg-slate-50 border-b border-slate-200">
           <tr>
             <th class="px-md py-sm font-table-header text-table-header text-on-surface-variant uppercase tracking-widest">Date / Time</th>
@@ -221,13 +222,14 @@
 
         </tbody>
       </table>
+      </div>
 
       <!-- Pagination -->
-      <div class="bg-slate-50 border-t border-slate-200 px-md py-3 flex items-center justify-between">
+      <div class="bg-slate-50 border-t border-slate-200 px-md py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p class="font-body-sm text-body-sm text-on-surface-variant">
           Showing {{ paginationStart }}–{{ paginationEnd }} of {{ filteredTransactions.length }} records
         </p>
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-1 flex-wrap">
           <button
             class="w-8 h-8 flex items-center justify-center border border-slate-200 rounded bg-white text-slate-400 disabled:opacity-40"
             :disabled="currentPage === 1"
@@ -257,7 +259,7 @@
 
     <!-- Audit Log Section -->
     <div class="bg-white border border-slate-200 rounded-xl p-lg">
-      <div class="flex items-center justify-between mb-md">
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-md">
         <h3 class="font-h3 text-h3 text-on-background">System Billing Audit Logs</h3>
         <div class="flex items-center gap-sm">
           <span class="bg-slate-100 text-on-surface-variant px-sm py-1 rounded-lg font-table-header text-table-header">Auto-sync: Every 5m</span>

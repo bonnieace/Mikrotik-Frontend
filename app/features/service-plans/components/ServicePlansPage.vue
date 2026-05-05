@@ -1,14 +1,14 @@
 ﻿<template>
-  <div class="p-lg max-w-container-max mx-auto">
+  <div class="p-md sm:p-lg max-w-container-max mx-auto">
 
     <!-- Page Header -->
-    <div class="flex items-center justify-between mb-xl">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-xl">
       <div>
         <h2 class="font-h1 text-h1 text-on-background">Service Plans</h2>
         <p class="font-body-md text-on-surface-variant">Manage network bandwidth tiers and subscriber distribution.</p>
       </div>
       <button
-        class="bg-primary text-on-primary px-lg py-2 rounded-lg font-h3 text-h3 hover:bg-slate-800 flex items-center gap-2 shadow-sm transition-all active:scale-[0.98]"
+        class="w-full sm:w-auto justify-center bg-primary text-on-primary px-lg py-2 rounded-lg font-h3 text-h3 hover:bg-slate-800 flex items-center gap-2 shadow-sm transition-all active:scale-[0.98]"
         @click="showCreateModal = true"
       >
         <span class="material-symbols-outlined text-lg">add</span>
@@ -17,7 +17,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-3 gap-lg mb-xl">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-lg mb-xl">
 
       <!-- Total Plans -->
       <div class="bg-white p-lg border border-slate-200 rounded-xl">
@@ -66,8 +66,8 @@
     <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
 
       <!-- Table Toolbar -->
-      <div class="p-lg border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
-        <div class="flex items-center gap-4">
+      <div class="p-lg border-b border-slate-200 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-slate-50/50">
+        <div class="flex items-center gap-4 w-full sm:w-auto">
           <div class="relative">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">filter_list</span>
             <select
@@ -81,7 +81,7 @@
             </select>
           </div>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 self-end sm:self-auto">
           <span class="font-table-header text-slate-500 uppercase tracking-widest">
             {{ filteredPackages.length }} plan{{ filteredPackages.length !== 1 ? `s` : `` }}
           </span>
@@ -212,7 +212,7 @@
     </div>
 
     <!-- Insight Cards -->
-    <div class="mt-xl grid grid-cols-2 gap-lg">
+    <div class="mt-xl grid grid-cols-1 lg:grid-cols-2 gap-lg">
       <div class="bg-blue-600 rounded-xl p-lg text-white relative overflow-hidden group">
         <div class="relative z-10">
           <h3 class="font-h2 text-h2 mb-sm">Revenue Forecast</h3>
@@ -242,7 +242,7 @@
     <!-- Create Plan Modal -->
     <Transition name="backdrop">
       <div v-if="showCreateModal" class="fixed inset-0 bg-black/40 z-40 flex items-center justify-center" @click.self="closeModal">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 z-50 flex flex-col overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 z-50 flex flex-col overflow-hidden max-h-[90vh]">
 
           <div class="flex items-center justify-between px-lg py-md border-b border-slate-200">
             <div class="flex items-center gap-3">
@@ -256,7 +256,7 @@
             </button>
           </div>
 
-          <form class="px-lg py-lg space-y-md" @submit.prevent="submitCreate">
+          <form class="px-lg py-lg space-y-md overflow-y-auto" @submit.prevent="submitCreate">
 
             <div>
               <label class="block font-table-header text-table-header text-on-surface-variant uppercase tracking-wider mb-xs">Plan Name</label>
@@ -280,7 +280,7 @@
               />
             </div>
 
-            <div class="grid grid-cols-2 gap-md">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
               <div>
                 <label class="block font-table-header text-table-header text-on-surface-variant uppercase tracking-wider mb-xs">Price (KES)</label>
                 <input
@@ -307,7 +307,7 @@
 
             <div>
               <label class="block font-table-header text-table-header text-on-surface-variant uppercase tracking-wider mb-xs">Service Type</label>
-              <div class="grid grid-cols-2 gap-sm">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
                 <label
                   class="flex items-center gap-3 px-md py-sm border rounded-lg cursor-pointer transition-all"
                   :class="form.service_type === `hotspot` ? `border-amber-400 bg-amber-50` : `border-slate-200 hover:bg-slate-50`"

@@ -1,24 +1,24 @@
 <template>
-  <div class="p-lg">
+  <div class="p-md sm:p-lg">
 
     <!-- Page Header -->
-    <div class="flex items-center justify-between mb-xl">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-xl">
       <div>
         <h1 class="font-h1 text-h1 text-on-background">Routers &amp; Configuration</h1>
         <p class="font-body-md text-body-md text-on-surface-variant mt-1">
           Manage core infrastructure, hardware health, and connectivity.
         </p>
       </div>
-      <div class="flex items-center gap-sm">
+      <div class="flex w-full sm:w-auto items-center gap-sm flex-col sm:flex-row">
         <button
-          class="flex items-center gap-1.5 border border-outline-variant text-on-surface px-md py-2 rounded-lg font-body-sm font-semibold hover:bg-slate-100 transition-colors"
+          class="w-full sm:w-auto justify-center flex items-center gap-1.5 border border-outline-variant text-on-surface px-md py-2 rounded-lg font-body-sm font-semibold hover:bg-slate-100 transition-colors"
           @click="pingAll"
         >
           <span class="material-symbols-outlined text-[16px]" :class="pinging ? 'animate-spin text-secondary' : ''">wifi_tethering</span>
           Ping All
         </button>
         <button
-          class="flex items-center gap-1.5 bg-primary text-on-primary px-md py-2 rounded-lg font-body-sm font-semibold hover:opacity-90 transition-all"
+          class="w-full sm:w-auto justify-center flex items-center gap-1.5 bg-primary text-on-primary px-md py-2 rounded-lg font-body-sm font-semibold hover:opacity-90 transition-all"
           @click="openAddModal"
         >
           <span class="material-symbols-outlined text-[16px]">add</span>
@@ -28,7 +28,7 @@
     </div>
 
     <!-- Stat Cards -->
-    <div class="grid grid-cols-3 gap-lg mb-xl">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg mb-xl">
 
       <div class="bg-white p-md border border-slate-200 rounded-xl flex flex-col gap-2">
         <div class="flex items-center justify-between">
@@ -75,7 +75,8 @@
         </span>
       </div>
 
-      <table class="w-full text-left border-collapse">
+      <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse min-w-[980px]">
         <thead class="bg-slate-50 border-b border-slate-200">
           <tr>
             <th class="px-md py-sm font-table-header text-table-header text-on-surface-variant uppercase tracking-widest">Router Name</th>
@@ -202,13 +203,14 @@
 
         </tbody>
       </table>
+      </div>
     </div>
 
     <!-- ── Add / Edit Modal ──────────────────────────────────────────────── -->
     <Transition name="modal">
-      <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center">
+      <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="closeModal"></div>
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-lg z-10">
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-lg z-10 max-h-[90vh] overflow-y-auto">
           <div class="flex items-center justify-between mb-md">
             <h2 class="font-h2 text-h2 text-on-background">
               {{ isEditing ? 'Edit Router' : 'Provision Router' }}
@@ -238,7 +240,7 @@
               />
             </div>
 
-            <div class="grid grid-cols-2 gap-md">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
               <div>
                 <label class="font-table-header text-table-header text-on-surface-variant uppercase tracking-wider block mb-1">Port *</label>
                 <input
@@ -296,7 +298,7 @@
 
     <!-- ── Delete Confirmation ───────────────────────────────────────────── -->
     <Transition name="modal">
-      <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center">
+      <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showDeleteConfirm = false"></div>
         <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-lg z-10">
           <div class="flex items-center gap-3 mb-md">

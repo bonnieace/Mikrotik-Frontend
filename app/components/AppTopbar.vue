@@ -1,8 +1,16 @@
 <template>
-  <header class="h-16 w-full sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-6">
+  <header class="h-16 w-full sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 gap-3">
+    <button
+      class="md:hidden p-2 rounded-md border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+      @click="sidebarOpen = !sidebarOpen"
+      aria-label="Toggle navigation"
+    >
+      <span class="material-symbols-outlined text-[20px]">menu</span>
+    </button>
+
     <!-- Search -->
-    <div class="flex items-center flex-1">
-      <div class="relative w-96 group">
+    <div class="flex items-center flex-1 min-w-0">
+      <div class="relative w-full max-w-96 group">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">
           search
         </span>
@@ -16,14 +24,14 @@
     </div>
 
     <!-- Right side -->
-    <div class="flex items-center space-x-6">
+    <div class="flex items-center space-x-3 sm:space-x-6">
       <!-- Status badge -->
-      <div class="flex items-center space-x-2 px-3 py-1 bg-green-50 text-green-700 rounded-full border border-green-100">
+      <div class="hidden lg:flex items-center space-x-2 px-3 py-1 bg-green-50 text-green-700 rounded-full border border-green-100">
         <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
         <span class="font-mono-label text-[10px] uppercase font-bold tracking-widest">System Status: Online</span>
       </div>
 
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2 sm:space-x-4">
         <!-- Notifications -->
         <button class="relative text-slate-600 hover:text-slate-900 transition-colors">
           <span class="material-symbols-outlined">notifications</span>
@@ -97,6 +105,7 @@
 const searchQuery = ref('')
 const routerMenuOpen = ref(false)
 const routerMenuRef = ref<HTMLElement | null>(null)
+const sidebarOpen = useState<boolean>('mobile-sidebar-open', () => false)
 
 const { routers, activeRouter, loading: loadingRouters, fetchRouters, setActiveRouter } = useRouterStore()
 

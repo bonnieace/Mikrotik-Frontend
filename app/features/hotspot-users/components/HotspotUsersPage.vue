@@ -4,17 +4,17 @@
   DO NOT redesign. Pixel-perfect match required.
 -->
 <template>
-  <div class="p-lg max-w-container-max mx-auto">
+  <div class="p-md sm:p-lg max-w-container-max mx-auto">
 
     <!-- Header -->
-    <header class="mb-lg flex items-end justify-between">
+    <header class="mb-lg flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <h2 class="font-h1 text-h1 text-on-background">Hotspot User Sessions</h2>
         <p class="font-body-md text-on-surface-variant">Real-time monitoring of active infrastructure connections</p>
       </div>
-      <div class="flex gap-sm">
+      <div class="flex w-full sm:w-auto gap-sm">
         <button
-          class="flex items-center gap-2 px-md py-2 bg-primary text-on-primary font-body-md rounded-lg hover:opacity-90 transition-all"
+          class="w-full sm:w-auto justify-center flex items-center gap-2 px-md py-2 bg-primary text-on-primary font-body-md rounded-lg hover:opacity-90 transition-all"
           @click="fetchData"
         >
           <span class="material-symbols-outlined text-[18px]" :class="{ 'animate-spin': loading }">refresh</span>
@@ -180,12 +180,12 @@
       </div>
 
       <!-- Pagination Footer -->
-      <div v-if="activeSessions.length > 0" class="px-md py-4 bg-slate-50 border-t border-outline-variant flex items-center justify-between">
+      <div v-if="activeSessions.length > 0" class="px-md py-4 bg-slate-50 border-t border-outline-variant flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span class="font-body-sm text-on-surface-variant">
           Showing <span class="font-bold text-on-surface">{{ activePaginationStart }}–{{ activePaginationEnd }}</span>
           of <span class="font-bold text-on-surface">{{ activeSessions.length.toLocaleString() }}</span> sessions
         </span>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
           <button
             class="p-1 border border-outline-variant rounded bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="activeCurrentPage === 1"
@@ -254,12 +254,12 @@
         </table>
       </div>
 
-      <div v-if="hotspotUsers.length > 0" class="px-md py-4 bg-slate-50 border-t border-outline-variant flex items-center justify-between">
+      <div v-if="hotspotUsers.length > 0" class="px-md py-4 bg-slate-50 border-t border-outline-variant flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span class="font-body-sm text-on-surface-variant">
           Showing <span class="font-bold text-on-surface">{{ usersPaginationStart }}–{{ usersPaginationEnd }}</span>
           of <span class="font-bold text-on-surface">{{ hotspotUsers.length.toLocaleString() }}</span> purchases
         </span>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
           <button
             class="p-1 border border-outline-variant rounded bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="usersCurrentPage === 1"
@@ -292,10 +292,10 @@
     </div>
 
     <!-- Bottom Bento Section -->
-    <div class="mt-lg grid gap-lg" style="grid-template-columns: 2fr 1fr">
+    <div class="mt-lg grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-lg">
 
       <!-- Automated Session Mitigation -->
-      <div class="bg-slate-900 text-white p-lg rounded-xl flex items-center justify-between">
+      <div class="bg-slate-900 text-white p-lg rounded-xl flex flex-col lg:flex-row lg:items-center lg:justify-between gap-lg">
         <div class="max-w-md">
           <h3 class="text-h2 font-h2 mb-2">Automated Session Mitigation</h3>
           <p class="text-slate-400 text-body-md mb-4">

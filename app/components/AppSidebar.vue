@@ -49,7 +49,8 @@ const snackbar = useSnackbar()
 
 const navItems = [
   { icon: 'dashboard', label: 'Dashboard', to: '/dashboard' },
-  { icon: 'group', label: 'Network Users', to: '/network-users' },
+  { icon: 'group', label: 'PPP Users', to: '/network-users' },
+  { icon: 'wifi', label: 'Hotspot Users', to: '/hotspot-users' },
   { icon: 'receipt_long', label: 'Service Plans', to: '/service-plans' },
   { icon: 'payments', label: 'Billing', to: '/billing' },
   { icon: 'router', label: 'Infrastructure', to: '/routers' },

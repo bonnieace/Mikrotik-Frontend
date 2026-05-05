@@ -5,11 +5,17 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE ?? 'https://api.uzanet.co.ke',
-      apiClientId: process.env.NUXT_PUBLIC_API_CLIENT_ID ?? 'string',
-      apiClientSecret: process.env.NUXT_PUBLIC_API_CLIENT_SECRET ?? 'string',
+      // Defaults — overridden at runtime by NUXT_PUBLIC_* env vars (nuxt auto-maps them)
+      apiBase: 'https://api.uzanet.co.ke',
+      apiClientId: '',
+      apiClientSecret: '',
     },
   },
+
+  components: [
+    { path: '~/components', pathPrefix: false },
+    { path: '~/features', pattern: '**/components/*.vue', pathPrefix: false },
+  ],
 
   modules: [
     '@nuxtjs/tailwindcss',

@@ -85,6 +85,7 @@ export default {
         'container-max': '1440px',
       },
       fontFamily: {
+        'inter': ['Inter', 'sans-serif'],
         'body-md': ['Inter', 'sans-serif'],
         'h1': ['Inter', 'sans-serif'],
         'body-lg': ['Inter', 'sans-serif'],
@@ -109,4 +110,13 @@ export default {
     },
   },
   plugins: [],
+  // Safelist classes that only appear in dynamically-created feature files so
+  // Tailwind JIT includes them even before a full dev-server rescan.
+  safelist: [
+    'grid-cols-3',
+    'grid-cols-4',
+    'lg:grid-cols-3',
+    'lg:grid-cols-4',
+    'md:grid-cols-4',
+  ],
 } satisfies Config

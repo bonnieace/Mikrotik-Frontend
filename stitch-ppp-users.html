@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface-variant": "#45464d",
+                      "surface": "#f8f9ff",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "on-tertiary-fixed": "#00201c",
+                      "secondary": "#006591",
+                      "background": "#f8f9ff",
+                      "surface-dim": "#cbdbf5",
+                      "error": "#ba1a1a",
+                      "outline-variant": "#c6c6cd",
+                      "on-secondary-fixed-variant": "#004c6e",
+                      "surface-container-low": "#eff4ff",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-background": "#0b1c30",
+                      "inverse-on-surface": "#eaf1ff",
+                      "surface-container-highest": "#d3e4fe",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#4fdbc8",
+                      "tertiary": "#000000",
+                      "surface-container": "#e5eeff",
+                      "outline": "#76777d",
+                      "primary": "#000000",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#d3e4fe",
+                      "on-surface": "#0b1c30",
+                      "tertiary-fixed": "#71f8e4",
+                      "on-secondary-container": "#004666",
+                      "surface-tint": "#565e74",
+                      "tertiary-container": "#00201c",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed": "#131b2e",
+                      "on-error": "#ffffff",
+                      "secondary-fixed-dim": "#89ceff",
+                      "inverse-surface": "#213145",
+                      "on-secondary": "#ffffff",
+                      "on-primary-container": "#7c839b",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed": "#001e2f",
+                      "inverse-primary": "#bec6e0",
+                      "secondary-container": "#39b8fd",
+                      "surface-container-high": "#dce9ff",
+                      "secondary-fixed": "#c9e6ff",
+                      "on-tertiary-container": "#009485",
+                      "primary-fixed": "#dae2fd",
+                      "primary-container": "#131b2e",
+                      "on-tertiary": "#ffffff",
+                      "surface-bright": "#f8f9ff",
+                      "on-tertiary-fixed-variant": "#005048"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "xl": "32px",
+                      "sm": "8px",
+                      "base": "4px",
+                      "xs": "4px",
+                      "gutter": "20px",
+                      "md": "16px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "body-md": ["Inter"],
+                      "h1": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "display": ["Inter"],
+                      "mono-label": ["monospace"],
+                      "h3": ["Inter"],
+                      "h2": ["Inter"],
+                      "table-header": ["Inter"]
+              },
+              "fontSize": {
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "mono-label": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "h3": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "h2": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "table-header": ["12px", {"lineHeight": "16px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar -->
+<aside class="w-[240px] h-screen fixed left-0 top-0 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col h-full py-6 font-inter text-sm font-medium tracking-tight">
+<div class="px-6 mb-8">
+<h1 class="text-lg font-bold text-slate-900 dark:text-slate-50 tracking-tighter">CoreNet ISP</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mt-1">Network Admin</p>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-150 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<!-- Active Tab: Network Users -->
+<a class="flex items-center px-3 py-2 bg-slate-200/50 dark:bg-slate-800/50 text-slate-900 dark:text-white border-r-2 border-blue-600 transition-colors duration-150 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+                Network Users
+            </a>
+<a class="flex items-center px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-150 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="receipt_long">receipt_long</span>
+                Service Plans
+            </a>
+<a class="flex items-center px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-150 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="payments">payments</span>
+                Billing
+            </a>
+<a class="flex items-center px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-150 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="router">router</span>
+                Infrastructure
+            </a>
+<a class="flex items-center px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-150 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="px-3 mt-auto pt-6 space-y-1">
+<a class="flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="help_outline">help_outline</span>
+                Support
+            </a>
+<a class="flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="h-16 w-[calc(100%-240px)] ml-[240px] sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md flex items-center justify-between px-6 font-inter text-sm font-medium">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-blue-500/20">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" data-icon="search">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-md pl-10 pr-4 py-2 text-slate-900 dark:text-white placeholder:text-slate-500 focus:ring-0" placeholder="Global user search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                System Status
+            </div>
+<div class="flex items-center gap-4">
+<button class="text-slate-600 hover:bg-slate-50 p-2 rounded-md transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-slate-600 hover:bg-slate-50 p-2 rounded-md transition-all">
+<span class="material-symbols-outlined" data-icon="help_center">help_center</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
+<img alt="Admin User Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a network administrator with a neutral, focused expression. The lighting is crisp and cool-toned, echoing the high-tech ISP environment. The background is a soft-focus office setting with minimalist white and slate gray furniture, maintaining a modern and systematic visual aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQEXVHpx8gdkNGA452XrldeVv8GEhsn_3XMpEGKajdyaleaSB-oj0DzMJdKlA46RKnOp6Afhvaupmf77_lAHxFqwS5MSs-SvIT0Rr3hCDppGYOKAB0N58jinfVNXDVbWgg6go5qqO0qs9DEbPweXwu0lGVKEIuupynKPEwqF6E0Wv7NowVsI5Ert3NN2qq3Jt1ivfg5Q5xVAxZtUV9z4dxTofsgS--XtTFGUUm8Hw4U1T2weZYHgiq6qsIfkU9n1BcmKlaigrIHg_p"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[240px] p-lg min-h-[calc(100vh-64px)]">
+<header class="mb-xl flex items-center justify-between">
+<div>
+<h2 class="font-h1 text-h1 text-on-background">PPP User Management</h2>
+<p class="font-body-md text-on-surface-variant">Administer active Point-to-Point protocol sessions and subscribers.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-h3 text-h3 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+                    New User
+                </button>
+</div>
+</header>
+<!-- Stats Section (Bento Inspired) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-lg mb-xl">
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-body-sm font-table-header text-on-surface-variant uppercase tracking-wider">Total Active</span>
+<span class="text-emerald-600 text-body-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+                        12%
+                    </span>
+</div>
+<div class="font-display text-display text-primary">12,482</div>
+<div class="mt-base h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-3/4"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-body-sm font-table-header text-on-surface-variant uppercase tracking-wider">Pending Disconnect</span>
+<span class="text-on-surface-variant text-body-sm font-bold">Stable</span>
+</div>
+<div class="font-display text-display text-primary">14</div>
+<div class="mt-base h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-on-surface-variant w-1/4"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-body-sm font-table-header text-on-surface-variant uppercase tracking-wider">Avg. Uptime</span>
+<span class="text-emerald-600 text-body-sm font-bold">99.9%</span>
+</div>
+<div class="font-display text-display text-primary">18d 4h</div>
+<div class="mt-base h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container w-5/6"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-body-sm font-table-header text-on-surface-variant uppercase tracking-wider">Peak Traffic</span>
+<span class="text-secondary text-body-sm font-bold">Today</span>
+</div>
+<div class="font-display text-display text-primary">1.2 Gbps</div>
+<div class="mt-base h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary-container w-1/2"></div>
+</div>
+</div>
+</div>
+<!-- Filter Bar -->
+<section class="bg-white border border-outline-variant rounded-t-xl p-md flex flex-wrap items-center gap-md">
+<div class="flex-1 min-w-[300px]">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="person_search">person_search</span>
+<input class="w-full pl-10 pr-4 py-2 border border-outline-variant rounded-lg font-body-md text-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/20 outline-none transition-all" placeholder="Search by username or IP address..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<select class="px-3 py-2 border border-outline-variant rounded-lg font-body-md text-body-md bg-white focus:border-secondary outline-none">
+<option>All Service Plans</option>
+<option>Fiber Enterprise 1G</option>
+<option>Fiber Home 500M</option>
+<option>Business Pro 200M</option>
+</select>
+<select class="px-3 py-2 border border-outline-variant rounded-lg font-body-md text-body-md bg-white focus:border-secondary outline-none">
+<option>All Statuses</option>
+<option>Active</option>
+<option>Inactive</option>
+<option>Limited</option>
+</select>
+<button class="p-2 border border-outline-variant rounded-lg hover:bg-slate-50 text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined block" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+<div class="h-8 w-px bg-outline-variant mx-sm"></div>
+<button class="font-body-md text-secondary font-semibold hover:underline">Clear Filters</button>
+</section>
+<!-- Data Table -->
+<section class="bg-white border-x border-b border-outline-variant rounded-b-xl overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full border-collapse text-left">
+<thead class="bg-slate-50 border-y border-outline-variant">
+<tr>
+<th class="px-md py-sm font-table-header text-table-header text-on-surface-variant uppercase tracking-wider">Subscriber Name</th>
+<th class="px-md py-sm font-table-header text-table-header text-on-surface-variant uppercase tracking-wider">Service Plan</th>
+<th class="px-md py-sm font-table-header text-table-header text-on-surface-variant uppercase tracking-wider">IP Address</th>
+<th class="px-md py-sm font-table-header text-table-header text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-md py-sm font-table-header text-table-header text-on-surface-variant uppercase tracking-wider">Uptime</th>
+<th class="px-md py-sm font-table-header text-table-header text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50/50 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed-variant font-bold text-xs">JD</div>
+<div>
+<div class="font-body-md text-on-surface font-semibold">john_doe_92</div>
+<div class="font-body-sm text-on-surface-variant">Johnathan Doe</div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-2 py-1 bg-surface-container text-on-secondary-container rounded font-mono-label text-[11px]">FIBER_ENT_1G</span>
+</td>
+<td class="px-md py-md font-mono-label text-on-surface-variant">192.168.100.12</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-body-md text-on-surface">Active</span>
+</div>
+</td>
+<td class="px-md py-md font-body-md text-on-surface-variant">12d 14h 22m</td>
+<td class="px-md py-md text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-slate-200 rounded-md transition-colors text-on-surface-variant" title="Edit User">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-error-container hover:text-error rounded-md transition-colors text-on-surface-variant" title="Disconnect">
+<span class="material-symbols-outlined text-[20px]" data-icon="power_off">power_off</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50/50 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-bold text-xs">AS</div>
+<div>
+<div class="font-body-md text-on-surface font-semibold">a_smith_biz</div>
+<div class="font-body-sm text-on-surface-variant">Alice Smith</div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-2 py-1 bg-surface-container text-on-secondary-container rounded font-mono-label text-[11px]">BIZ_PRO_200M</span>
+</td>
+<td class="px-md py-md font-mono-label text-on-surface-variant">192.168.100.45</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-slate-300"></span>
+<span class="font-body-md text-on-surface-variant">Inactive</span>
+</div>
+</td>
+<td class="px-md py-md font-body-md text-on-surface-variant">-</td>
+<td class="px-md py-md text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-slate-200 rounded-md transition-colors text-on-surface-variant" title="Edit User">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-secondary-container hover:text-white rounded-md transition-colors text-on-surface-variant" title="Reconnect">
+<span class="material-symbols-outlined text-[20px]" data-icon="play_arrow">play_arrow</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50/50 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed-variant font-bold text-xs">RL</div>
+<div>
+<div class="font-body-md text-on-surface font-semibold">robert_l78</div>
+<div class="font-body-sm text-on-surface-variant">Robert Long</div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-2 py-1 bg-surface-container text-on-secondary-container rounded font-mono-label text-[11px]">HOME_FIB_500M</span>
+</td>
+<td class="px-md py-md font-mono-label text-on-surface-variant">192.168.100.89</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-body-md text-on-surface">Active</span>
+</div>
+</td>
+<td class="px-md py-md font-body-md text-on-surface-variant">04d 02h 11m</td>
+<td class="px-md py-md text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-slate-200 rounded-md transition-colors text-on-surface-variant" title="Edit User">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-error-container hover:text-error rounded-md transition-colors text-on-surface-variant" title="Disconnect">
+<span class="material-symbols-outlined text-[20px]" data-icon="power_off">power_off</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50/50 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed-variant font-bold text-xs">MW</div>
+<div>
+<div class="font-body-md text-on-surface font-semibold">m_white_corp</div>
+<div class="font-body-sm text-on-surface-variant">Maria White</div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-2 py-1 bg-surface-container text-on-secondary-container rounded font-mono-label text-[11px]">FIBER_ENT_1G</span>
+</td>
+<td class="px-md py-md font-mono-label text-on-surface-variant">192.168.100.221</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+<span class="font-body-md text-on-surface">Limited</span>
+</div>
+</td>
+<td class="px-md py-md font-body-md text-on-surface-variant">00d 22h 45m</td>
+<td class="px-md py-md text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-slate-200 rounded-md transition-colors text-on-surface-variant" title="Edit User">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-error-container hover:text-error rounded-md transition-colors text-on-surface-variant" title="Disconnect">
+<span class="material-symbols-outlined text-[20px]" data-icon="power_off">power_off</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-slate-50/50 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-on-surface-variant font-bold text-xs">BK</div>
+<div>
+<div class="font-body-md text-on-surface font-semibold">b_knight_res</div>
+<div class="font-body-sm text-on-surface-variant">Bruce Knight</div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-2 py-1 bg-surface-container text-on-secondary-container rounded font-mono-label text-[11px]">HOME_FIB_500M</span>
+</td>
+<td class="px-md py-md font-mono-label text-on-surface-variant">192.168.100.155</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-body-md text-on-surface">Active</span>
+</div>
+</td>
+<td class="px-md py-md font-body-md text-on-surface-variant">31d 08h 12m</td>
+<td class="px-md py-md text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-slate-200 rounded-md transition-colors text-on-surface-variant" title="Edit User">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-error-container hover:text-error rounded-md transition-colors text-on-surface-variant" title="Disconnect">
+<span class="material-symbols-outlined text-[20px]" data-icon="power_off">power_off</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="px-md py-sm bg-slate-50 border-t border-outline-variant flex items-center justify-between">
+<span class="font-body-sm text-on-surface-variant">Showing <span class="font-bold text-on-surface">1-5</span> of <span class="font-bold text-on-surface">12,482</span> users</span>
+<div class="flex gap-2">
+<button class="p-1 border border-outline-variant rounded bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed">
+<span class="material-symbols-outlined text-sm block" data-icon="chevron_left">chevron_left</span>
+</button>
+<div class="flex gap-1 items-center px-2 font-mono-label text-[11px] text-on-surface">
+                        Page <input class="w-8 h-6 text-center border border-outline-variant rounded p-0 text-[11px]" type="text" value="1"/> of 2,497
+                    </div>
+<button class="p-1 border border-outline-variant rounded bg-white hover:bg-slate-100">
+<span class="material-symbols-outlined text-sm block" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Contextual Help / Tips (Asymmetric Column) -->
+<section class="mt-xl grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<div class="lg:col-span-2 bg-primary-container p-lg rounded-xl text-on-primary flex items-center gap-lg">
+<div class="flex-1">
+<h3 class="font-h2 text-h2 mb-xs">Manage High-Traffic Profiles</h3>
+<p class="font-body-md opacity-80 max-w-lg">Identified 3 profiles consuming over 80% of bandwidth in Segment-B. Consider reviewing their traffic shaping rules or upgrading their service plan.</p>
+</div>
+<button class="px-4 py-2 border border-white/20 rounded-lg font-h3 text-h3 hover:bg-white/10 transition-colors">View Report</button>
+</div>
+<div class="bg-surface-container-high p-lg rounded-xl flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-sm text-secondary">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+<span class="font-mono-label uppercase tracking-widest text-[10px]">Quick Tip</span>
+</div>
+<h3 class="font-h3 text-h3 text-on-background mb-xs">Keyboard Shortcuts</h3>
+<p class="font-body-sm text-on-surface-variant">Press <kbd class="px-1 bg-white border border-outline-variant rounded shadow-sm">⌘</kbd> + <kbd class="px-1 bg-white border border-outline-variant rounded shadow-sm">K</kbd> to jump to global search instantly.</p>
+</div>
+<div class="mt-md">
+<img alt="Abstract Data Visualization" class="w-full h-24 object-cover rounded-lg mix-blend-multiply opacity-50" data-alt="A sophisticated abstract visualization of data flows and network nodes, using a palette of electric blue and deep slate. The composition is clean and minimalist, featuring thin lines and subtle glowing points that suggest high-speed connectivity and administrative oversight. The overall lighting is bright and professional, fitting a high-end corporate dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgNboZmjAg8tK-IuNXMMWIr2ZJ_JgpBSa3304gOn3fUGFGe059JGp-gw-Xom3Nj93VK3KYoZQMlcOAJFM8pu6wgGn19lXqSXUilI0AAhQva0YJ43uRuzT_ad2rSDJT0ICPJbgkr7EofKqQP7VMQ4ABNeOOPelNpaNWv_BS9S0kLkKJ1YUmPUwaBzhL_-hcGDYsIahF-GruIIae7S6TQE-JvmOopPJsf7XzT1E_hpQD9MI4w24Rqo3Nl7EbISsznGcKLsbMGpjAnYB8"/>
+</div>
+</div>
+</section>
+</main>
+</body></html>

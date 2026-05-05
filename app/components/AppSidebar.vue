@@ -68,6 +68,8 @@ const { logout } = useAuth()
 const snackbar = useSnackbar()
 const sidebarOpen = useState<boolean>('mobile-sidebar-open', () => false)
 
+const MOBILE_BREAKPOINT = 768
+
 const navItems = [
   { icon: 'dashboard', label: 'Dashboard', to: '/dashboard' },
   { icon: 'group', label: 'PPP Users', to: '/network-users' },
@@ -83,10 +85,16 @@ function isActive(path: string) {
 }
 
 function handleNavClick() {
-  if (process.client && window.innerWidth < 768) {
+  if (process.client && window.innerWidth < MOBILE_BREAKPOINT) {
     sidebarOpen.value = false
   }
 }
+
+watch(() => route.path, () => {
+  if (process.client && window.innerWidth < MOBILE_BREAKPOINT) {
+    sidebarOpen.value = false
+  }
+})
 
 async function handleLogout() {
   handleNavClick()

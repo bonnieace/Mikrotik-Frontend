@@ -78,10 +78,12 @@ export function useRouterPing() {
       if (prev !== false) {
         // Just went offline
         localStorage.setItem(offlineKey(router.id), Date.now().toString())
+        function onOfflineSnackDismissed() { _offlineSnackId = null }
         _offlineSnackId = show(
           `Router "${router.name}" (${router.ip_address}) is offline — check your connection or router settings.`,
           'error',
           0, // persistent until dismissed or router comes back
+          onOfflineSnackDismissed,
         )
       }
     }

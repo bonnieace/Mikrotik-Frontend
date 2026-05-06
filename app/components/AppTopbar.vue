@@ -26,9 +26,20 @@
     <!-- Right side -->
     <div class="flex items-center space-x-3 sm:space-x-6">
       <!-- Status badge -->
-      <div class="hidden lg:flex items-center space-x-2 px-3 py-1 bg-green-50 text-green-700 rounded-full border border-green-100">
-        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-        <span class="font-mono-label text-[10px] uppercase font-bold tracking-widest">System Status: Online</span>
+      <div
+        class="hidden lg:flex items-center space-x-2 px-3 py-1 rounded-full border transition-colors duration-300"
+        :class="pingStatusClass"
+      >
+        <span
+          class="w-2 h-2 rounded-full transition-colors duration-300"
+          :class="[pingDotClass, isOnline !== false ? 'animate-pulse' : '']"
+        ></span>
+        <span class="font-mono-label text-[10px] uppercase font-bold tracking-widest">
+          System Status:
+          <span v-if="isOnline === null">Checking…</span>
+          <span v-else-if="isOnline">Online</span>
+          <span v-else>Offline</span>
+        </span>
       </div>
 
       <div class="flex items-center space-x-2 sm:space-x-4">
@@ -108,6 +119,19 @@ const routerMenuRef = ref<HTMLElement | null>(null)
 const sidebarOpen = useState<boolean>('mobile-sidebar-open', () => false)
 
 const { routers, activeRouter, loading: loadingRouters, fetchRouters, setActiveRouter } = useRouterStore()
+const { isOnline } = useRouterPing()
+
+const pingStatusClass = computed(() => {
+  if (isOnline.value === null) return 'bg-slate-50 text-slate-500 border-slate-200'
+  if (isOnline.value) return 'bg-green-50 text-green-700 border-green-100'
+  return 'bg-red-50 text-red-700 border-red-200'
+})
+
+const pingDotClass = computed(() => {
+  if (isOnline.value === null) return 'bg-slate-400'
+  if (isOnline.value) return 'bg-green-500'
+  return 'bg-red-500'
+})
 
 onMounted(() => fetchRouters())
 

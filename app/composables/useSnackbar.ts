@@ -11,12 +11,13 @@ let _seq = 0
 export function useSnackbar() {
   const items = useState<SnackbarItem[]>('snackbar', () => [])
 
-  function show(message: string, variant: SnackbarVariant = 'info', duration = 4500) {
+  function show(message: string, variant: SnackbarVariant = 'info', duration = 4500): number {
     const id = ++_seq
     items.value = [...items.value, { id, message, variant }]
     if (duration > 0) {
       setTimeout(() => dismiss(id), duration)
     }
+    return id
   }
 
   function dismiss(id: number) {

@@ -37,7 +37,7 @@ Assigned IP: {{ bundle.l2tp_peer.ip_address }}</pre>
       <ResourceState :loading="loading" :error="error" :selected="true" @retry="fetchRouters">
         <RecordTable :rows="routers || []" :columns="[{ key: 'name', label: 'Router' }, { key: 'ip_address', label: 'Address' }, { key: 'portal_slug', label: 'Portal slug' }, { key: 'payment_provider', label: 'Provider' }, { key: 'onboarding_status', label: 'Onboarding' }, { key: 'last_seen_at', label: 'Last seen · EAT' }]" row-key="uid" caption="Managed routers">
           <template #last_seen_at="{ row }">{{ dateTime(row.last_seen_at) }}</template>
-          <template #actions="{ row }"><button :disabled="busy" @click="setActiveRouter(row)">Select</button><button :disabled="busy" @click="check(row)">Check connection</button><button :disabled="busy" @click="edit(row)">Edit</button><button class="danger" :disabled="busy" @click="remove(row)">Delete</button></template>
+          <template #actions="{ row }"><a v-if="row.portal_enabled" class="action" :href="'/portal/' + row.portal_slug" target="_blank" rel="noopener noreferrer">Customer portal</a><button :disabled="busy" @click="setActiveRouter(row)">Select</button><button :disabled="busy" @click="check(row)">Check connection</button><button :disabled="busy" @click="edit(row)">Edit</button><button class="danger" :disabled="busy" @click="remove(row)">Delete</button></template>
         </RecordTable>
         <p v-if="statusMessage" class="notice" role="status">{{ statusMessage }}</p>
       </ResourceState>

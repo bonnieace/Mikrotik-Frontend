@@ -2,7 +2,7 @@
 
 Nuxt 4 operator console for the hardened FastAPI backend at `https://api.uzanet.co.ke/api/v1`.
 
-This repository is an **operator/admin portal**, not the customer-facing captive portal. It manages routers, hotspot/PPPoE accounts, service plans, payment attempts and audit logs. Customer checkout remains in the existing customer portal.
+This repository includes an **operator/admin portal** and public **customer checkout at `/portal/:portalSlug`**. Operators manage routers, hotspot/PPPoE accounts, service plans, payment attempts and audit logs. Customers purchase hotspot access or renew an existing PPPoE account without an operator login.
 
 ## Architecture and authentication
 
@@ -81,6 +81,7 @@ This same-origin arrangement does not require adding the portal domain to FastAP
 | `/service-plans` | Create/edit/retire hotspot and PPPoE plans |
 | `/billing` | Ledger, payment attempts, eligible provisioning retries and audit events |
 | `/settings` | Change password and invalidate all backend sessions for the account |
+| `/portal/:portalSlug` | Public hotspot checkout, existing PPPoE renewals, payment recovery/status and hotspot voucher login |
 
 Operator creation of customer access provisions immediately without collecting payment. Use it deliberately. “Enabled” is stored account status, not “currently connected.” Times are rendered in East Africa Time.
 
@@ -95,6 +96,8 @@ Download the credential-bearing `.rsc` privately, review it, back up the intende
 Payment-provider selection does not configure provider credentials/callbacks. Those are backend deployment responsibilities.
 
 ## Verification
+
+For public checkout setup, captive-router login URLs, recovery behavior and trusted customer-IP forwarding, see [Customer portal setup](docs/CUSTOMER_PORTAL.md).
 
 ```bash
 npm run check

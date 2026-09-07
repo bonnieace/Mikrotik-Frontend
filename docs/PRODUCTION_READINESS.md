@@ -40,7 +40,7 @@ Backend contract checked against the hardened `bonnieace/Mikrotik` main source. 
 - Add edge per-IP login throttling, body limits and request timeouts before public exposure. Backend account lockouts are not a substitute for edge abuse controls.
 - List search/pagination operates on the records returned by the current backend. It is not server-side historical search. Large-dataset pagination needs a backend contract extension.
 - No refund, payment approval, provider settlement reconciliation, administrator-management or profile-creation endpoint has been invented.
-- No new public renewal/captive-portal route is added in this repository.
+- Public customer checkout is available at `/portal/:portalSlug`, with a separate allowlisted `/api/customer/*` proxy. Operator `/login` and authorization remain separate. See `docs/CUSTOMER_PORTAL.md` for setup and payment-specific release checks.
 - Upstream constraint: the audited backend's router deletion guard checks all package records, including retired plans. Retiring plans alone does not allow deletion. The portal explains this conflict; a backend lifecycle/retention decision is needed before deleting routers with package history. Do not work around it with direct database deletion.
 
 ## Automated verification

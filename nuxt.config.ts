@@ -8,6 +8,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiBase: 'https://api.uzanet.co.ke/api/v1',
     siteOrigin: process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000',
+    public: { hotspotLoginUrls: '{}' },
+    customerIpHeader: '',
   },
 
   components: [

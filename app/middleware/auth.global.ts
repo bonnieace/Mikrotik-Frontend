@@ -1,4 +1,10 @@
-export default defineNuxtRouteMiddleware(async to => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
+  // A full navigation applies the correct document CSP across customer/operator boundaries.
+  if (import.meta.client && from.matched.length && (Boolean(to.meta.customerPortal) !== Boolean(from.meta.customerPortal) || (to.meta.customerPortal && to.params.portalSlug !== from.params.portalSlug))) {
+    window.location.assign(to.fullPath)
+    return abortNavigation()
+  }
+  if (to.meta.customerPortal === true) return
   if (to.path === '/login') return
   const auth = useAuth()
   const resetSession = useSessionReset()

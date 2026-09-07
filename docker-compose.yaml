@@ -5,6 +5,8 @@ services:
     environment:
       NUXT_API_BASE: ${NUXT_API_BASE:-https://api.uzanet.co.ke/api/v1}
       NUXT_SITE_ORIGIN: ${NUXT_SITE_ORIGIN:?Set the exact HTTPS portal origin}
+      NUXT_PUBLIC_HOTSPOT_LOGIN_URLS: ${NUXT_PUBLIC_HOTSPOT_LOGIN_URLS:-}
+      NUXT_CUSTOMER_IP_HEADER: ${NUXT_CUSTOMER_IP_HEADER:-}
     expose:
       - "3000"
     read_only: true

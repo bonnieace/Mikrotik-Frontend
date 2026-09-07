@@ -35,13 +35,14 @@ export async function jsonBody(event: H3Event): Promise<Record<string, unknown>>
     return body
   } catch { throw createError({ statusCode: 400, message: 'Invalid JSON object.' }) }
 }
-export async function backend<T>(event: H3Event, path: string, method: 'GET' | 'POST' | 'PATCH' | 'DELETE' = 'GET', body?: Record<string, unknown> | string, token?: string): Promise<T> {
+export async function backend<T>(event: H3Event, path: string, method: 'GET' | 'POST' | 'PATCH' | 'DELETE' = 'GET', body?: Record<string, unknown> | string, token?: string, publicHeaders: { 'Idempotency-Key'?: string; 'X-Payment-Token'?: string; 'X-Forwarded-For'?: string } = {}): Promise<T> {
   setHeader(event, 'Cache-Control', 'no-store, private')
   const base = upstreamBase(useRuntimeConfig(event).apiBase)
   try {
     return await $fetch<T>(base + '/' + path, {
       method, body, retry: 0, timeout: 35000, redirect: 'error',
       headers: {
+        ...publicHeaders,
         ...(token ? { Authorization: 'Bearer ' + token } : {}),
         ...(typeof body === 'string' ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
       },

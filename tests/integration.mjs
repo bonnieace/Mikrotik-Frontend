@@ -12,6 +12,10 @@ test('production BFF authentication, CSRF, proxy, error and cookie boundaries', 
   const user = { id: 1, username: 'test-operator', email: null, role: 'isp' }
   const uid = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'
   const fakeToken = 'integration-only-token'
+  let customerService = 'hotspot'
+  let customerState = 'pending'
+  const customerToken = 'customer-capability-not-an-operator-token'
+  const customerPayment = () => ({ payment_id: uid, status: customerState, service_type: customerService, amount: '100.00', currency: 'KES', provider: 'mpesa', phone_number: '2547***678', expires_at: '2026-09-07T12:00:00', message: null, ...(customerState === 'provisioned' ? customerService === 'hotspot' ? { credentials: { username: 'hs-test', password: 'voucher-test-only' } } : { account: 'subscriber-test' } : {}) })
   const upstream = createServer(async (req, res) => {
     let body = ''
     for await (const chunk of req) body += chunk
@@ -22,6 +26,12 @@ test('production BFF authentication, CSRF, proxy, error and cookie boundaries', 
     if (scenario === 'expired') { res.statusCode = 401; res.end(JSON.stringify({ detail: 'Invalid credentials' })); return }
     if (scenario === 'fail') { res.statusCode = 503; res.end(JSON.stringify({ detail: 'mysql://root:secret@db' })); return }
     if (scenario === 'redirect') { res.statusCode = 302; res.setHeader('location', '/stolen'); res.end(); return }
+    if (req.url === '/api/v1/public/portals/westlands' && req.method === 'GET') { res.end(JSON.stringify({ portal_slug: 'westlands', name: 'Test ISP', payment_provider: 'mpesa', packages: [] })); return }
+    if (req.url === '/api/v1/public/portals/westlands/payments' && req.method === 'POST') { res.statusCode = 202; res.end(JSON.stringify({ ...customerPayment(), status_token: customerToken })); return }
+    if (req.url === '/api/v1/public/payments/' + uid) {
+      if (req.headers['x-payment-token'] !== customerToken) { res.statusCode = 404; res.end('{}'); return }
+      res.end(JSON.stringify(customerPayment())); return
+    }
     if (req.url === '/api/v1/auth/token') { res.end(JSON.stringify({ access_token: fakeToken, expires_in: 3600 })); return }
     if (req.url === '/api/v1/me') { res.end(JSON.stringify(user)); return }
     if (req.url === '/api/v1/auth/logout' || req.url === '/api/v1/users/change-password' || req.method === 'DELETE') { res.statusCode = 204; res.end(); return }
@@ -37,7 +47,7 @@ test('production BFF authentication, CSRF, proxy, error and cookie boundaries', 
   await new Promise(resolve => reservation.close(resolve))
   const origin = 'http://127.0.0.1:' + port
   const processHandle = spawn(process.execPath, ['.output/server/index.mjs'], {
-    env: { ...process.env, NODE_ENV: 'production', PORT: String(port), HOST: '127.0.0.1', NUXT_SITE_ORIGIN: origin, NUXT_API_BASE: 'http://127.0.0.1:' + upstream.address().port + '/api/v1' },
+    env: { ...process.env, NODE_ENV: 'production', PORT: String(port), HOST: '127.0.0.1', NUXT_SITE_ORIGIN: origin, NUXT_API_BASE: 'http://127.0.0.1:' + upstream.address().port + '/api/v1', NUXT_PUBLIC_HOTSPOT_LOGIN_URLS: '{"westlands":"https://wifi.example/login"}', NUXT_CUSTOMER_IP_HEADER: '' },
     stdio: ['ignore', 'pipe', 'pipe'],
   })
   let output = ''
@@ -172,5 +182,68 @@ test('production BFF authentication, CSRF, proxy, error and cookie boundaries', 
       assert.ok(result.headers.getSetCookie().some(value => value.startsWith('uzanet_session=') && value.includes('Max-Age=0')))
     }
     scenario = 'ok'
+  })
+  await t.test('customer portal and catalogue are public; operator routes stay protected', async () => {
+    const page = await request('/portal/westlands?link-login=https://evil.test/login')
+    assert.equal(page.status, 200)
+    assert.match(page.headers.get('content-security-policy'), /form-action 'self' https:\/\/wifi.example/)
+    assert.ok(!page.headers.get('content-security-policy').includes('evil.test'))
+    assert.ok(!(await request('/login')).headers.get('content-security-policy').includes('wifi.example'))
+    const catalogue = await request('/api/customer/portals/westlands', { headers: { Cookie: cookie, Authorization: 'Bearer attacker' } })
+    assert.equal(catalogue.status, 200)
+    assert.equal((await catalogue.json()).name, 'Test ISP')
+    assert.equal(requests.at(-1).headers.authorization, undefined)
+    assert.equal(requests.at(-1).headers.cookie, undefined)
+    assert.equal((await request('/api/backend/routers')).status, 401)
+  })
+  await t.test('checkout forwards the original idempotency key and keeps status capability HttpOnly', async () => {
+    const body = JSON.stringify({ package_uid: uid, phone_number: '0712345678' })
+    for (let i = 0; i < 2; i++) {
+      const response = await request('/api/customer/portals/westlands/payments', { method: 'POST', headers: { ...headers, 'Idempotency-Key': 'same-original-request', Cookie: cookie, Authorization: 'Bearer attacker', 'X-Forwarded-For': '203.0.113.99' }, body })
+      assert.equal(response.status, 202)
+      const result = await response.json()
+      assert.equal(result.payment_id, uid)
+      assert.equal(result.status_token, undefined)
+      const capability = response.headers.getSetCookie().find(c => c.startsWith('uzanet_payment='))
+      for (const attribute of ['HttpOnly', 'Secure', 'SameSite=Strict', 'Path=/api/customer/payments/' + uid]) assert.ok(capability.includes(attribute))
+      assert.ok(!response.headers.getSetCookie().some(c => c.startsWith('uzanet_session=')))
+      const last = requests.at(-1)
+      assert.equal(last.headers['idempotency-key'], 'same-original-request')
+      assert.equal(last.headers.authorization, undefined)
+      assert.equal(last.headers.cookie, undefined)
+      assert.notEqual(last.headers['x-forwarded-for'], '203.0.113.99')
+      assert.equal(JSON.parse(last.body).phone_number, '254712345678')
+    }
+  })
+  await t.test('customer writes reject foreign origins, missing keys, price overrides and unsupported paths', async () => {
+    const count = requests.length
+    const body = { package_uid: uid, phone_number: '0712345678' }
+    for (const [extraHeaders, payload, status] of [
+      [{ Origin: 'https://evil.test', 'Idempotency-Key': 'original-request' }, body, 403],
+      [{}, body, 400],
+      [{ 'Idempotency-Key': 'original-request' }, { ...body, amount: 1 }, 400],
+      [{ 'Idempotency-Key': 'original-request' }, { ...body, phone_number: '07123' }, 400],
+    ]) assert.equal((await request('/api/customer/portals/westlands/payments', { method: 'POST', headers: { ...headers, ...extraHeaders }, body: JSON.stringify(payload) })).status, status)
+    for (const path of ['routers', 'auth/token', 'payments/' + uid + '?token=secret', 'payments/' + uid + '/retry-provisioning']) assert.equal((await request('/api/customer/' + path)).status, 404)
+    assert.equal(requests.length, count)
+  })
+  await t.test('payment status requires its own capability and never uses operator authentication', async () => {
+    const count = requests.length
+    assert.equal((await request('/api/customer/payments/' + uid, { headers: { Cookie: cookie, 'X-Payment-Token': customerToken } })).status, 404)
+    assert.equal(requests.length, count)
+    for (const service of ['hotspot', 'pppoe']) {
+      customerService = service
+      for (const status of ['pending', 'paid', 'provisioning', 'provisioning_failed', 'manual_review', 'provisioned', 'failed']) {
+        customerState = status
+        const result = await request('/api/customer/payments/' + uid, { headers: { Cookie: 'uzanet_payment=' + customerToken + '; ' + cookie } })
+        assert.equal(result.status, 200)
+        const value = await result.json()
+        assert.equal(value.status, status)
+        assert.equal(Boolean(value.credentials), service === 'hotspot' && status === 'provisioned')
+        assert.equal(Boolean(value.account), service === 'pppoe' && status === 'provisioned')
+        assert.equal(requests.at(-1).headers.authorization, undefined)
+        assert.equal(requests.at(-1).headers['x-payment-token'], customerToken)
+      }
+    }
   })
 })

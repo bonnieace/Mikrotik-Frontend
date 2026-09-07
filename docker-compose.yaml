@@ -1,0 +1,16 @@
+services:
+  portal:
+    build: .
+    restart: unless-stopped
+    environment:
+      NUXT_API_BASE: ${NUXT_API_BASE:-https://api.uzanet.co.ke/api/v1}
+      NUXT_SITE_ORIGIN: ${NUXT_SITE_ORIGIN:?Set the exact HTTPS portal origin}
+    expose:
+      - "3000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true

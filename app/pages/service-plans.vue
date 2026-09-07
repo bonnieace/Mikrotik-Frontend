@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'app' })
-useHead({ title: 'Service Plans — CoreNet ISP' })
+useHead({ title: 'Service Plans — Uzanet' })
 </script>
 
 <template>

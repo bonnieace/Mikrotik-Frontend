@@ -15,10 +15,7 @@
       <div class="actions heading-actions">
         <button
           :disabled="loading || activeLoading || busy || !activeRouter"
-          @click="
-            refresh()
-            refreshActive()
-          "
+          @click="refreshCustomers"
         >
           <span class="material-symbols-outlined text-[18px]" aria-hidden="true">refresh</span
           >Refresh</button
@@ -394,6 +391,10 @@ const connections = computed(() =>
     _key: String(row['.id'] || i),
   })),
 )
+async function refreshCustomers() {
+  if (loading.value || activeLoading.value || busy.value) return
+  await Promise.all([refresh(), refreshActive()])
+}
 async function create() {
   const uid = activeRouter.value?.uid
   if (!uid || !eligiblePlans.value.some((p) => p.uid === form.package_uid)) return

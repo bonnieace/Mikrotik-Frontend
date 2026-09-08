@@ -1,15 +1,15 @@
+import process from 'node:process'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
+  ssr: false,
 
   runtimeConfig: {
-    public: {
-      // Defaults — overridden at runtime by NUXT_PUBLIC_* env vars (nuxt auto-maps them)
-      apiBase: 'https://api.uzanet.co.ke',
-      apiClientId: '',
-      apiClientSecret: '',
-    },
+    apiBase: 'https://api.uzanet.co.ke/api/v1',
+    siteOrigin: process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000',
+    public: { hotspotLoginUrls: '{}' },
+    customerIpHeader: '',
   },
 
   components: [
@@ -25,13 +25,13 @@ export default defineNuxtConfig({
   // Tailwind: utility-only, preflight OFF (prevents reset from overriding Stitch styles)
   tailwindcss: {
     cssPath: '~/assets/css/tailwind.css',
-    configPath: '~/tailwind.config.ts',
+    configPath: 'tailwind.config.ts',
     exposeConfig: false,
     viewer: false,
   },
 
   // Global CSS — keep minimal; per-feature Stitch styles live in app/features/<name>/styles/
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css', '~/assets/css/operator.css'],
 
   postcss: {
     plugins: {
@@ -42,6 +42,8 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      title: 'Uzanet · Operator Portal',
+      meta: [{ name: 'robots', content: 'noindex, nofollow' }],
       link: [
         {
           rel: 'preconnect',

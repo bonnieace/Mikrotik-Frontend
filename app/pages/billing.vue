@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'app' })
-useHead({ title: 'Payments & Logs — CoreNet ISP' })
+useHead({ title: 'Payments & Logs — Uzanet' })
 </script>
 
 <template>

@@ -1,42 +1,25 @@
-export interface MikrotikRouter {
-  id: number
-  name: string
-  ip_address: string
-  port: number
-  username: string
-  owner_id: number
-  created_at: string
-  updated_at: string
-}
-
+import type { Router } from '~~/shared/types'
+export type MikrotikRouter = Router
 export function useRouterStore() {
-  const { token } = useAuth()
-  const config = useRuntimeConfig()
-
-  const routers = useState<MikrotikRouter[]>('routers', () => [])
-  const activeRouter = useState<MikrotikRouter | null>('activeRouter', () => null)
-  const loading = useState<boolean>('routersLoading', () => false)
-
+  const api = useApi()
+  const { isAuthenticated } = useAuth()
+  const routers = useState<Router[]>('routers', () => [])
+  const activeRouter = useState<Router | null>('activeRouter', () => null)
+  const loading = useState('routersLoading', () => false)
+  const error = useState('routersError', () => '')
+  const generation = useState('routersGeneration', () => 0)
   async function fetchRouters() {
-    if (!token.value) return
+    const run = ++generation.value
     loading.value = true
+    error.value = ''
     try {
-      const data = await $fetch<MikrotikRouter[]>(`${config.public.apiBase}/routers`, {
-        headers: { Authorization: `Bearer ${token.value}` },
-      })
+      const data = await api<Router[]>('routers')
+      if (run !== generation.value || !isAuthenticated.value) return
       routers.value = data
-      // Auto-select first if none selected yet
-      if (!activeRouter.value && data.length > 0) {
-        activeRouter.value = data[0]
-      }
-    } finally {
-      loading.value = false
-    }
+      activeRouter.value = data.find(r => r.uid === activeRouter.value?.uid) || data[0] || null
+    } catch (e) { if (run === generation.value) error.value = apiError(e) }
+    finally { if (run === generation.value) loading.value = false }
   }
-
-  function setActiveRouter(router: MikrotikRouter) {
-    activeRouter.value = router
-  }
-
-  return { routers, activeRouter, loading, fetchRouters, setActiveRouter }
+  function setActiveRouter(router: Router) { activeRouter.value = routers.value.find(r => r.uid === router.uid) || null }
+  return { routers, activeRouter, loading, error, fetchRouters, setActiveRouter }
 }

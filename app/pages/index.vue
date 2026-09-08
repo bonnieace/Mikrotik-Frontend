@@ -1,4 +1,3 @@
 <script setup lang="ts">
-// Redirect root to the login screen
-await navigateTo('/login')
+await navigateTo('/dashboard', { replace: true })
 </script>

@@ -1,0 +1,9 @@
+export interface Operator { id: number; username: string; email: string | null; role: string }
+export interface Router { uid: string; name: string; ip_address: string; port: number; username: string; portal_slug: string; portal_enabled: boolean; payment_provider: string; connection_mode: string; onboarding_status: string; last_seen_at: string | null; last_error: string | null }
+export interface Plan { uid: string; name: string; description: string | null; price: number | string; service_type: 'hotspot' | 'pppoe'; validity_minutes: number; router_profile: string; rate_limit: string | null; is_active: boolean }
+export interface Customer { uid: string; name?: string; username?: string; pppoe_username?: string; phone_number?: string; mobile_number?: string; is_active: boolean; expires_at?: string | null; expires_on?: string | null; profile?: string; credentials?: { username: string; password: string } }
+export interface Payment { uid: string; invoice: string; provider: string; provider_receipt: string | null; status: string; amount: string | number; user_type: string; created_at: string }
+export interface PaymentAttempt { payment_id: string; provider: string; provider_receipt: string | null; status: string; amount: string | number; currency: string; service_type: string; customer_reference: string; phone_number: string; message: string | null; can_retry: boolean; created_at: string; updated_at: string }
+export interface AuditLog { id: number; timestamp: string; level: string; event_type: string; description: string; phone_number: string | null }
+export interface ActiveUsers { router_uid: string; generated_at: string; hotspot: Record<string, unknown>[]; pppoe: Record<string, unknown>[] }
+export interface Onboarding { router: Router; expires_at: string; script: string; l2tp_peer: { username: string; password: string; ip_address: string | null; provisioned: boolean } }

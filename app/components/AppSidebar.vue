@@ -20,7 +20,7 @@
     >
     <!-- Brand -->
     <div class="px-6 mb-8">
-      <h1 class="text-lg font-bold text-slate-900 tracking-tighter">CoreNet ISP</h1>
+      <h1 class="text-lg font-bold text-slate-900 tracking-tighter">Uzanet</h1>
       <p class="text-xs text-slate-500 font-medium">Network Admin</p>
     </div>
 
@@ -30,10 +30,10 @@
         v-for="item in navItems"
         :key="item.to"
         :to="item.to"
-        @click="handleNavClick"
         :class="isActive(item.to)
           ? 'flex items-center px-3 py-2 bg-slate-200/50 text-slate-900 border-r-2 border-blue-600 font-inter text-sm font-medium tracking-tight transition-transform active:scale-[0.98]'
           : 'flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-inter text-sm font-medium tracking-tight transition-colors duration-150'"
+        @click="handleNavClick"
       >
         <span class="material-symbols-outlined mr-3">{{ item.icon }}</span>
         {{ item.label }}
@@ -42,14 +42,6 @@
 
     <!-- Bottom actions -->
     <div class="px-3 mt-auto pt-6 border-t border-slate-200">
-      <a
-        href="#"
-        class="flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-inter text-sm font-medium tracking-tight transition-colors duration-150"
-        @click="handleNavClick"
-      >
-        <span class="material-symbols-outlined mr-3">help_outline</span>
-        Support
-      </a>
       <a
         href="#"
         class="flex items-center px-3 py-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-inter text-sm font-medium tracking-tight transition-colors duration-150"
@@ -65,7 +57,6 @@
 <script setup lang="ts">
 const route = useRoute()
 const { logout } = useAuth()
-const snackbar = useSnackbar()
 const sidebarOpen = useState<boolean>('mobile-sidebar-open', () => false)
 
 const MOBILE_BREAKPOINT = 768
@@ -85,20 +76,19 @@ function isActive(path: string) {
 }
 
 function handleNavClick() {
-  if (process.client && window.innerWidth < MOBILE_BREAKPOINT) {
+  if (import.meta.client && window.innerWidth < MOBILE_BREAKPOINT) {
     sidebarOpen.value = false
   }
 }
 
 watch(() => route.path, () => {
-  if (process.client && window.innerWidth < MOBILE_BREAKPOINT) {
+  if (import.meta.client && window.innerWidth < MOBILE_BREAKPOINT) {
     sidebarOpen.value = false
   }
 })
 
 async function handleLogout() {
   handleNavClick()
-  snackbar.show('Logged out successfully', 'info')
   await logout()
 }
 </script>

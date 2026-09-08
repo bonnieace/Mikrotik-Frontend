@@ -6,5 +6,5 @@
 import AdminLoginPage from '~/features/admin-login/components/AdminLoginPage.vue'
 
 definePageMeta({ layout: 'auth' })
-useHead({ title: 'Admin Login — CoreNet ISP' })
+useHead({ title: 'Admin Login — Uzanet' })
 </script>

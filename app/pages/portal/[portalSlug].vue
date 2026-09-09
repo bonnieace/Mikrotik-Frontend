@@ -41,7 +41,8 @@ const portalSlug = computed(() => String(route.params.portalSlug || route.query.
 const isPrivateIpv4 = (hostname: string) => {
   const octets = hostname.split('.').map(Number)
   if (octets.length !== 4 || octets.some((value) => !Number.isInteger(value) || value < 0 || value > 255)) return false
-  return octets[0] === 10 || (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) || (octets[0] === 192 && octets[1] === 168)
+  const [first = 0, second = 0] = octets
+  return first === 10 || (first === 172 && second >= 16 && second <= 31) || (first === 192 && second === 168)
 }
 
 function configuredHotspotHosts(): string[] {

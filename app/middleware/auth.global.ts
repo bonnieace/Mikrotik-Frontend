@@ -42,6 +42,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const status = (error as { statusCode?: number }).statusCode
     resetSession()
     if (status !== 401) useSnackbar().show('Unable to verify your session. Try signing in when the backend is available.', 'warning')
-    return navigateTo('/login')
+    return navigateTo({ path: '/login', query: { next: to.fullPath } })
   }
 })

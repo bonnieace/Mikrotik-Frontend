@@ -2,7 +2,7 @@ import { UUID } from './api-policy.ts'
 export const portalSlugPattern = /^[a-z0-9](?:[a-z0-9-]{1,58}[a-z0-9])$/
 export const uuidPattern = new RegExp('^' + UUID + '$')
 export interface CustomerPlan { uid: string; name: string; description: string | null; price: number | string; currency: string; service_type: 'hotspot' | 'pppoe'; validity_minutes: number; rate_limit: string | null }
-export interface PublicPortal { portal_slug: string; name: string; payment_provider: string; packages: CustomerPlan[] }
+export interface PublicPortal { isp_identifier: string | null; portal_slug: string; name: string; payment_provider: string; packages: CustomerPlan[] }
 export interface CheckoutBody { package_uid: string; phone_number: string; customer_reference?: string }
 export interface CustomerPayment { payment_id: string; status: string; provider: string; amount: number | string; currency: string; service_type: 'hotspot' | 'pppoe'; phone_number: string; message: string | null; expires_at: string; credentials?: { username: string; password: string }; account?: string }
 export interface SavedCheckout { key: string; body: CheckoutBody; createdAt: number; paymentId?: string }

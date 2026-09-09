@@ -6,8 +6,19 @@ const middleware = fs.readFileSync(new URL('../app/middleware/auth.global.ts', i
 const login = fs.readFileSync(new URL('../app/features/admin-login/components/AdminLoginPage.vue', import.meta.url), 'utf8')
 const onboard = fs.readFileSync(new URL('../app/pages/onboard.vue', import.meta.url), 'utf8')
 
+const executableMiddleware = middleware
+  .split('\n')
+  .filter((line) => !line.trimStart().startsWith('//'))
+  .join('\n')
+
 test('auth middleware preserves the requested operator destination', () => {
   assert.match(middleware, /query: \{ next: to\.fullPath \}/)
+})
+
+test('legacy captive portal route does not perform a resolver API call before rendering', () => {
+  assert.match(middleware, /Compatibility-first captive portal flow/)
+  assert.doesNotMatch(executableMiddleware, /\$fetch/)
+  assert.doesNotMatch(executableMiddleware, /isp_identifier/)
 })
 
 test('login only accepts local return paths and otherwise falls back to dashboard', () => {

@@ -225,6 +225,10 @@
                 <option value="kopokopo">Kopo Kopo</option>
               </select></label
             >
+            <label v-if="mode === 'onboarding' && !editing" class="field check-field">
+              Replace an existing UzaNet-managed tunnel (disconnects its previous UzaNet record)
+              <input v-model="replaceManagedTunnel" type="checkbox" />
+            </label>
             <template v-if="mode === 'manual' || editing">
               <label class="field"
                 >Router address<input
@@ -276,7 +280,7 @@
                   : editing
                     ? 'Save changes'
                     : mode === 'onboarding'
-                      ? 'Provision peer & generate script'
+                      ? 'Generate setup command'
                       : 'Register router'
               }}</button
             ><button type="button" @click="closeForm">Cancel</button>
@@ -301,10 +305,22 @@
               : 'The L2TP account was NOT provisioned automatically. Configure the peer on the VPS before running the script.'
           }}
         </p>
+        <template v-if="bundle.install_command">
+          <p>
+            Paste the whole command into the router terminal. It downloads over HTTPS, imports the
+            script and removes the downloaded file.
+          </p>
+          <pre class="secret" aria-label="Router setup command">{{ bundle.install_command }}</pre>
+          <button class="primary" @click="copyCommand">Copy setup command</button>
+          <p role="status">{{ copyMessage }}</p>
+          <p class="muted">
+            The download works once. Save the fallback RSC before closing; use it if transfer or
+            import is interrupted. The router needs a correct clock and trusted HTTPS certificates.
+          </p>
+        </template>
         <p class="muted">
-          Review the script and back up your router. Run it in the intended router's RouterOS
-          terminal, then select that router and check its connection. Generating a script alone does
-          not connect the router.
+          The script saves a configuration backup. It does not replace hotspot HTML files; update
+          their redirect separately. After setup, check the router connection here.
         </p>
         <pre v-if="showScript" class="secret">{{ bundle.script }}</pre>
         <pre v-if="showScript && !bundle.l2tp_peer.provisioned" class="secret">
@@ -313,7 +329,7 @@ L2TP password: {{ bundle.l2tp_peer.password }}
 Assigned IP: {{ bundle.l2tp_peer.ip_address }}</pre
         >
         <div class="actions">
-          <button class="primary" @click="download">Download .rsc script</button
+          <button class="primary" @click="download">Download fallback .rsc</button
           ><button @click="showScript = !showScript">
             {{ showScript ? 'Hide' : 'Reveal' }} script</button
           ><button @click="dismissBundle">Dismiss credentials</button>
@@ -333,6 +349,16 @@ const mode = ref('onboarding'),
   statusMessage = ref(''),
   showScript = ref(false)
 const formOpen = ref(false)
+const replaceManagedTunnel = ref(false)
+const copyMessage = ref('')
+async function copyCommand() {
+  try {
+    await navigator.clipboard.writeText(bundle.value?.install_command || '')
+    copyMessage.value = 'Copied. Paste the whole command into the router terminal.'
+  } catch {
+    copyMessage.value = 'Copy unavailable. Select and copy the command below.'
+  }
+}
 function closeForm() {
   formOpen.value = false
   reset()
@@ -358,9 +384,11 @@ const blank = () => ({
 const form = reactive(blank())
 function reset() {
   editing.value = ''
+  replaceManagedTunnel.value = false
   Object.assign(form, blank())
 }
 function dismissBundle() {
+  copyMessage.value = ''
   bundle.value = null
   showScript.value = false
 }
@@ -404,6 +432,7 @@ async function save() {
             name: form.name,
             portal_slug: form.portal_slug,
             payment_provider: form.payment_provider,
+            replace_managed_tunnel: replaceManagedTunnel.value,
           },
         }),
       async (result) => {

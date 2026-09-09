@@ -6,4 +6,4 @@ export interface Payment { uid: string; invoice: string; provider: string; provi
 export interface PaymentAttempt { payment_id: string; provider: string; provider_receipt: string | null; status: string; amount: string | number; currency: string; service_type: string; customer_reference: string; phone_number: string; message: string | null; can_retry: boolean; created_at: string; updated_at: string }
 export interface AuditLog { id: number; timestamp: string; level: string; event_type: string; description: string; phone_number: string | null }
 export interface ActiveUsers { router_uid: string; generated_at: string; hotspot: Record<string, unknown>[]; pppoe: Record<string, unknown>[] }
-export interface Onboarding { router: Router; expires_at: string; script: string; l2tp_peer: { username: string; password: string; ip_address: string | null; provisioned: boolean } }
+export interface Onboarding { router: Router; expires_at: string; script: string; install_command?: string; download_url?: string; l2tp_peer: { username: string; password: string; ip_address: string | null; provisioned: boolean } }

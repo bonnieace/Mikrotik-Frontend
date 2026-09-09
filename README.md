@@ -107,3 +107,10 @@ npm audit --audit-level=high
 Checks include lint, TypeScript, unit/security-policy tests, a production build and HTTP integration tests against an isolated fake backend. Integration tests never call the live ISP API. GitHub Actions repeats these checks on PRs and changes to `master`.
 
 See [production readiness and release checklist](docs/PRODUCTION_READINESS.md) for what has and has not been verified.
+
+The router setup drawer supports the backend's single-use **Copy setup command**,
+with inline/manual RSC fallback for interrupted downloads and rolling deployments.
+Deploy the backend migration first. The router fetches directly from the configured
+HTTPS API using a scoped header token; this is not a new public Nuxt proxy route.
+Managed-tunnel replacement is an explicit opt-in because it disconnects the old
+UzaNet record. Existing hotspot HTML redirects are not changed by this command.

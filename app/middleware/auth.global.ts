@@ -6,31 +6,28 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   if (to.meta.customerPortal === true) {
-    const portalSlug = typeof to.params.portalSlug === 'string' ? to.params.portalSlug : ''
-    const ispIdentifier = typeof to.params.ispIdentifier === 'string' ? to.params.ispIdentifier : ''
-
-    // Old captive-portal HTML and saved links may still point to /portal/{slug}.
-    // Resolve once through the public portal API and replace the browser URL with the
-    // tenant-qualified canonical route without dropping MikroTik query parameters.
-    if (portalSlug && !ispIdentifier) {
-      try {
-        const portal = await $fetch<{ isp_identifier?: string | null }>('/api/customer/portals/' + encodeURIComponent(portalSlug), {
-          retry: 0,
-          timeout: 15000,
-        })
-        if (portal.isp_identifier) {
-          return navigateTo(
-            {
-              path: '/portal/' + encodeURIComponent(portal.isp_identifier) + '/' + encodeURIComponent(portalSlug),
-              query: to.query,
-            },
-            { replace: true },
-          )
-        }
-      } catch {
-        // Let the customer page render the normal portal loading error.
-      }
-    }
+    // Compatibility-first captive portal flow:
+    // keep /portal/{portalSlug} as a first-class route and let the page perform the
+    // single public portal lookup used by the old Vue portal. This avoids an extra
+    // resolver request + redirect before rendering and keeps older/low-end RouterOS
+    // captive integrations on the shortest proven path.
+    //
+    // The newer ISP-qualified canonicalization is intentionally disabled for now.
+    // It can be restored after the new portal has full parity with the legacy portal.
+    //
+    // const portalSlug = typeof to.params.portalSlug === 'string' ? to.params.portalSlug : ''
+    // const ispIdentifier = typeof to.params.ispIdentifier === 'string' ? to.params.ispIdentifier : ''
+    // if (portalSlug && !ispIdentifier) {
+    //   const portal = await $fetch<{ isp_identifier?: string | null }>(
+    //     '/api/customer/portals/' + encodeURIComponent(portalSlug),
+    //   )
+    //   if (portal.isp_identifier) {
+    //     return navigateTo({
+    //       path: '/portal/' + encodeURIComponent(portal.isp_identifier) + '/' + encodeURIComponent(portalSlug),
+    //       query: to.query,
+    //     }, { replace: true })
+    //   }
+    // }
     return
   }
 

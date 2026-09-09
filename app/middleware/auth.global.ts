@@ -4,7 +4,36 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     window.location.assign(to.fullPath)
     return abortNavigation()
   }
-  if (to.meta.customerPortal === true) return
+
+  if (to.meta.customerPortal === true) {
+    const portalSlug = typeof to.params.portalSlug === 'string' ? to.params.portalSlug : ''
+    const ispIdentifier = typeof to.params.ispIdentifier === 'string' ? to.params.ispIdentifier : ''
+
+    // Old captive-portal HTML and saved links may still point to /portal/{slug}.
+    // Resolve once through the public portal API and replace the browser URL with the
+    // tenant-qualified canonical route without dropping MikroTik query parameters.
+    if (portalSlug && !ispIdentifier) {
+      try {
+        const portal = await $fetch<{ isp_identifier?: string | null }>('/api/customer/portals/' + encodeURIComponent(portalSlug), {
+          retry: 0,
+          timeout: 15000,
+        })
+        if (portal.isp_identifier) {
+          return navigateTo(
+            {
+              path: '/portal/' + encodeURIComponent(portal.isp_identifier) + '/' + encodeURIComponent(portalSlug),
+              query: to.query,
+            },
+            { replace: true },
+          )
+        }
+      } catch {
+        // Let the customer page render the normal portal loading error.
+      }
+    }
+    return
+  }
+
   if (to.path === '/login') return
   const auth = useAuth()
   const resetSession = useSessionReset()

@@ -1,6 +1,8 @@
 # Customer checkout and renewals
 
-Share `https://YOUR-PORTAL-DOMAIN/portal/YOUR-PORTAL-SLUG`, using the router's existing backend `portal_slug`. Infrastructure now links to each enabled customer portal. Customer routes are public; `/login` remains the operator sign-in page. The old portal can continue operating during migration.
+Share `https://YOUR-PORTAL-DOMAIN/portal/YOUR-ISP-IDENTIFIER/YOUR-PORTAL-SLUG`. The ISP identifier is the operator username and the portal slug is the router's existing backend `portal_slug`. Infrastructure links to this canonical tenant-qualified URL for each enabled customer portal. Customer routes are public; `/login` remains the operator sign-in page.
+
+The historical `/portal/YOUR-PORTAL-SLUG` route remains available during migration. It resolves the portal through the public API and replaces the browser URL with the canonical ISP-qualified route while preserving MikroTik captive-portal query parameters.
 
 ## Supported customer journeys
 
@@ -39,7 +41,20 @@ The customer document CSP permits form submission only to itself and that slug's
 
 RouterOS must support the form's login method: HTTPS login is preferred; an explicitly configured HTTP-PAP endpoint also works where browsers permit insecure form submission, with a customer warning. HTTP-CHAP challenge calculation is not implemented; links containing `chap-id`/`chap-challenge` direct the customer to the router's native login page. Do not disable router security just to hide an integration error. MikroTik documents the distinctions and CHAP's hashing requirement in [HotSpot authentication](https://help.mikrotik.com/docs/spaces/ROS/pages/56459266/HotSpot%2B-%2BCaptive%2Bportal) and [Hotspot customisation](https://help.mikrotik.com/docs/spaces/ROS/pages/87162881/Hotspot%2Bcustomisation).
 
-Configure your existing hotspot splash/redirect to use the new `/portal/{slug}` URL, and allow the portal hostname through the pre-login walled garden. The portal JavaScript uses same-origin APIs. Google font hosts are optional for typography; system fonts remain available. This PR does not modify a router's splash files, profiles, walled garden or certificates.
+### Guided onboarding redirect
+
+For newly guided L2TP-onboarded routers, the generated RSC now attempts to install the canonical redirect automatically when at least one enabled HotSpot server exists. It does not overwrite the ISP's source HotSpot directory. Instead it:
+
+1. reads the HotSpot server profile and current HTML directory;
+2. copies that directory to a router-specific Uzanet-managed sibling directory;
+3. downloads only the managed copy's `login.html` from `/hotspot-login/{ispIdentifier}/{portalSlug}`;
+4. points `html-directory-override` to the managed copy only after the download succeeds.
+
+The managed `login.html` forwards `link-login-only`, `link-orig`, MAC and IP using RouterOS's URL-escaped template variables. If the copy, fetch or profile switch cannot complete, the existing HotSpot HTML remains active and L2TP/API onboarding continues. This keeps portal customization failure from bricking router onboarding.
+
+Set backend `PORTAL_PUBLIC_URL` to the same exact HTTPS origin as `NUXT_SITE_ORIGIN` in production. If it is omitted, the backend falls back to the first valid HTTPS `CORS_ORIGINS` entry for compatibility; explicit configuration is recommended whenever there is more than one allowed origin.
+
+The portal hostname still needs pre-login walled-garden access. The portal JavaScript uses same-origin APIs. Google font hosts are optional for typography; system fonts remain available.
 
 ## Trusted proxy IP and abuse controls
 
@@ -55,4 +70,4 @@ The backend currently rate-limits payment initiation using both phone number and
 
 Run `npm run check`. Tests use an isolated fake backend and headless Vue lifecycles; no live charges occur. They verify public/operator separation, cookie scoping, payload restrictions, stable idempotency keys across reload, duplicate-submit protection, late-response cleanup, phone/account validation, status transitions and captive URL/CSP restrictions.
 
-Before launch, test real browser reload/visibility behavior and captive-browser cookie/form handling; confirm gateway HTTPS/login settings and walled garden access; verify trusted IP forwarding; and run M-Pesa and Kopo Kopo sandbox hotspot purchases and PPPoE renewals, including duplicate callbacks and a router outage after payment. Provider credentials/callbacks, package profiles and existing PPPoE accounts must be configured in the backend/router. The work has not been deployed or tested with live customer funds.
+Before launch, test real browser reload/visibility behavior and captive-browser cookie/form handling; confirm gateway HTTPS/login settings and walled-garden access; verify trusted IP forwarding; and run M-Pesa and Kopo Kopo sandbox hotspot purchases and PPPoE renewals, including duplicate callbacks and a router outage after payment. Provider credentials/callbacks, package profiles and existing PPPoE accounts must be configured in the backend/router. The work has not been deployed or tested with live customer funds.

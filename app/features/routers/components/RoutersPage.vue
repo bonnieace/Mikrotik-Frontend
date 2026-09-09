@@ -100,7 +100,11 @@
           <template #portal_slug="{ row }"
             ><div class="cell-identity">
               <div>
-                <strong>{{ row.portal_slug }}</strong
+                <strong>{{
+                  row.isp_identifier
+                    ? row.isp_identifier + '/' + row.portal_slug
+                    : row.portal_slug
+                }}</strong
                 ><small>{{ row.portal_enabled ? 'Portal enabled' : 'Portal disabled' }}</small>
               </div>
             </div></template
@@ -149,7 +153,7 @@
             ><a
               v-if="row.portal_enabled"
               class="router-portal-link"
-              :href="'/portal/' + row.portal_slug"
+              :href="row.portal_path || '/portal/' + row.portal_slug"
               target="_blank"
               rel="noopener noreferrer"
               :aria-label="'Open ' + row.name + ' customer portal'"
@@ -308,19 +312,21 @@
         <template v-if="bundle.install_command">
           <p>
             Paste the whole command into the router terminal. It downloads over HTTPS, imports the
-            script and removes the downloaded file.
+            script and removes the downloaded file after a successful import.
           </p>
           <pre class="secret" aria-label="Router setup command">{{ bundle.install_command }}</pre>
           <button class="primary" @click="copyCommand">Copy setup command</button>
           <p role="status">{{ copyMessage }}</p>
           <p class="muted">
-            The download works once. Save the fallback RSC before closing; use it if transfer or
-            import is interrupted. The router needs a correct clock and trusted HTTPS certificates.
+            The RSC download remains retryable until the router claims onboarding or the token
+            expires. The router needs a correct clock and trusted HTTPS certificates.
           </p>
         </template>
         <p class="muted">
-          The script saves a configuration backup. It does not replace hotspot HTML files; update
-          their redirect separately. After setup, check the router connection here.
+          When an enabled HotSpot exists, the script keeps the current HTML directory, creates a
+          managed copy and installs the ISP-qualified Uzanet redirect there. If that optional step
+          cannot be completed, the existing HotSpot portal stays active and control-plane onboarding
+          continues.
         </p>
         <pre v-if="showScript" class="secret">{{ bundle.script }}</pre>
         <pre v-if="showScript && !bundle.l2tp_peer.provisioned" class="secret">

@@ -107,6 +107,7 @@
 <script setup lang="ts">
 const { login } = useAuth()
 const snackbar = useSnackbar()
+const route = useRoute()
 
 const showPassword = ref(false)
 const loading = ref(false)
@@ -117,6 +118,12 @@ const form = reactive({
   password: '',
 })
 
+function destinationAfterLogin() {
+  const next = typeof route.query.next === 'string' ? route.query.next : ''
+  if (next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/login')) return next
+  return '/dashboard'
+}
+
 async function handleLogin() {
   if (loading.value) return
   error.value = ''
@@ -124,7 +131,7 @@ async function handleLogin() {
   try {
     await login(form.identifier, form.password)
     snackbar.show('Authenticated successfully', 'success')
-    await navigateTo('/dashboard')
+    await navigateTo(destinationAfterLogin())
   } catch (err: unknown) {
     error.value = apiError(err)
   } finally {

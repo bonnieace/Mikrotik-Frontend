@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { checkoutBody, customerPaymentMessage, hotspotLoginMap, normalizeCustomerPhone, paymentIsWaiting, publicCustomerPath, trustedHotspotLogin, type CustomerPayment, type CustomerPlan } from '../shared/customer.ts'
+import { checkoutBody, customerPaymentButton, customerPaymentMessage, hotspotLoginMap, normalizeCustomerPhone, paymentIsWaiting, publicCustomerPath, trustedHotspotLogin, type CustomerPayment, type CustomerPlan } from '../shared/customer.ts'
 
 const uid = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'
 const plan = { uid, service_type: 'hotspot' } as CustomerPlan
@@ -27,6 +27,10 @@ test('paid, provisioning and review states never claim access is active', () => 
   for (const status of ['provisioned', 'provisioning_failed', 'manual_review', 'failed', 'unknown']) assert.equal(paymentIsWaiting(status), false)
   for (const status of ['provisioning_failed', 'manual_review']) assert.match(customerPaymentMessage({ status } as CustomerPayment), /Do not pay again/)
   assert.match(customerPaymentMessage({ status: 'paid' } as CustomerPayment), /being activated/)
+  assert.equal(customerPaymentButton('submitting'), 'Sending M-Pesa prompt…')
+  assert.equal(customerPaymentButton('pending'), 'Confirm payment on your phone')
+  assert.equal(customerPaymentButton('provisioning'), 'Activating your internet…')
+  assert.equal(customerPaymentButton('provider-wording'), 'Checking payment status…')
   assert.match(customerPaymentMessage({ status: 'provisioned', service_type: 'pppoe' } as CustomerPayment), /renewed/)
 })
 test('captive targets are exact and per-ISP; query parameters cannot redirect credentials', () => {

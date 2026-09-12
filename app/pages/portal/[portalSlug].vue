@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CustomerPayment, CustomerPlan, PublicPortal } from '~~/shared/customer'
+import { customerPaymentButton, customerPaymentMessage, paymentIsWaiting } from '~~/shared/customer'
 
 definePageMeta({ layout: 'default', customerPortal: true, key: (route) => route.path })
 
@@ -26,6 +27,7 @@ const submittingPayment = ref(false)
 const paymentError = ref('')
 const paymentSuccess = ref('')
 const paymentProgress = ref('')
+const paymentStage = ref('idle')
 let componentActive = true
 let paymentAttempt = 0
 
@@ -74,6 +76,12 @@ const linkLogin = computed(() => {
 })
 
 const canSubmitLogin = computed(() => !!linkLogin.value)
+const paymentButtonText = computed(() => submittingPayment.value ? customerPaymentButton(paymentStage.value) : 'Submit Payment')
+
+const updatePaymentProgress = (payment: CustomerPayment) => {
+  paymentStage.value = payment.status
+  paymentProgress.value = customerPaymentMessage(payment)
+}
 
 const formatDuration = (minutes: number) => {
   if (minutes < 60) return `${minutes} minutes`
@@ -123,6 +131,7 @@ const openPlanPopup = (plan: LegacyPlan) => {
   paymentError.value = ''
   paymentSuccess.value = ''
   paymentProgress.value = ''
+  paymentStage.value = 'idle'
   phoneNumber.value = ''
   customerReference.value = ''
   selectedPlan.value = plan
@@ -137,6 +146,7 @@ const closePlanPopup = () => {
   submittingPayment.value = false
   paymentSuccess.value = ''
   paymentProgress.value = ''
+  paymentStage.value = 'idle'
 }
 
 const normalizePhoneNumber = (value: string) => {
@@ -174,13 +184,14 @@ const wait = (milliseconds: number) => new Promise((resolve) => window.setTimeou
 const pollPayment = async (initial: CustomerPayment, attempt: number) => {
   const deadline = Math.min(new Date(initial.expires_at).getTime(), Date.now() + 16 * 60_000)
   let result = initial
-  while (componentActive && attempt === paymentAttempt && Date.now() < deadline && ['created', 'pending', 'provisioning'].includes(result.status)) {
-    paymentProgress.value = result.status === 'provisioning' ? 'Payment received. Activating access…' : 'Waiting for payment confirmation…'
+  updatePaymentProgress(result)
+  while (componentActive && attempt === paymentAttempt && Date.now() < deadline && paymentIsWaiting(result.status)) {
     await wait(2500)
     result = await $fetch<CustomerPayment>('/api/customer/payments/' + encodeURIComponent(initial.payment_id), {
       retry: 0,
       timeout: 40000,
     })
+    updatePaymentProgress(result)
   }
   return result
 }
@@ -204,6 +215,8 @@ const submitPayment = async () => {
 
   submittingPayment.value = true
   paymentSuccess.value = ''
+  paymentStage.value = 'submitting'
+  paymentProgress.value = 'Securely contacting M-Pesa. Keep this window open.'
   const attempt = ++paymentAttempt
 
   try {
@@ -223,7 +236,7 @@ const submitPayment = async () => {
     const result = await pollPayment(initial, attempt)
     if (!componentActive || attempt !== paymentAttempt) return
     if (result.status !== 'provisioned') {
-      throw new Error(result.message || (result.status === 'pending' ? 'Payment confirmation timed out. Check the prompt and try status again.' : 'Payment was not completed.'))
+      throw new Error(customerPaymentMessage(result))
     }
     if (selectedPlan.value.service_type === 'pppoe') {
       paymentSuccess.value = `Payment confirmed. PPPoE account ${result.account || customerReference.value} is active.`
@@ -242,6 +255,7 @@ const submitPayment = async () => {
     }
   } catch (error) {
     paymentError.value = legacyErrorMessage(error, (error as Error)?.message || 'Unable to complete payment. Please try again.')
+    paymentProgress.value = ''
   } finally {
     if (attempt === paymentAttempt) submittingPayment.value = false
   }
@@ -283,19 +297,28 @@ useHead({ title: computed(() => `${portal.value?.name || 'Uzanet Hotspot'} · In
 
       <main class="portal-scroll-pane">
         <div class="portal-content-inner">
-          <p v-if="portalLoading" class="portal-warning">Loading available packages…</p>
-          <p v-else-if="portalError" class="portal-warning"><LegacyLucideIcon name="alert-triangle" :size="18" class="warn-icon" /> {{ portalError }}</p>
+          <p v-if="portalError" class="portal-warning"><LegacyLucideIcon name="alert-triangle" :size="18" class="warn-icon" /> {{ portalError }}</p>
           <p v-if="portalNotice" class="field-hint">{{ portalNotice }}</p>
           <div class="hero-banner"><div class="hero-text"><h1 class="hero-heading">Welcome Back</h1><p class="hero-sub">Experience high-velocity browsing.</p></div></div>
 
           <section class="portal-section">
             <div class="section-header"><LegacyLucideIcon name="credit-card" :size="20" class="section-icon" /><h2 class="section-title">Choose an internet package</h2></div>
             <div class="plan-list">
+              <div v-if="portalLoading" class="plans-loading" role="status" aria-live="polite">
+                <div class="plans-loading-header">
+                  <div class="package-loader-mark" aria-hidden="true"><span class="package-loader-ring"></span><LegacyLucideIcon name="wifi" :size="22" /></div>
+                  <div><p class="plans-loading-title">Finding available packages</p><p class="plans-loading-copy">Connecting securely to your internet provider…</p></div>
+                </div>
+                <div v-for="item in 3" :key="item" class="plan-skeleton" aria-hidden="true">
+                  <span class="skeleton-icon"></span><span class="skeleton-copy"><i></i><i></i></span><span class="skeleton-price"></span>
+                </div>
+              </div>
               <button v-for="plan in plans" :key="plan.id" type="button" class="plan-row" :class="{ 'plan-row--featured': plan.featured }" @click="openPlanPopup(plan)">
                 <div class="plan-icon-wrap" :class="{ 'plan-icon-wrap--featured': plan.featured }"><LegacyLucideIcon :name="plan.icon" :size="22" /></div>
                 <div class="plan-info"><p class="plan-label" :class="{ 'plan-label--featured': plan.featured }">{{ plan.label }}</p><p class="plan-name">{{ plan.name }}</p></div>
                 <div class="plan-pricing"><p class="plan-price">Ksh. {{ plan.amount }}</p><p class="plan-sub" :class="{ 'plan-sub--featured': plan.featured }">{{ plan.sub }}</p></div>
               </button>
+              <p v-if="!portalLoading && !portalError && !plans.length" class="plans-empty">No active internet packages are available right now.</p>
             </div>
           </section>
 
@@ -336,8 +359,11 @@ useHead({ title: computed(() => `${portal.value?.name || 'Uzanet Hotspot'} · In
             <div class="summary-grid"><div class="summary-cell"><p class="summary-label">Duration</p><p class="summary-value">{{ formatDuration(selectedPlan.validity_minutes) }}</p></div><div class="summary-cell"><p class="summary-label">Speed</p><p class="summary-value">{{ selectedPlan.rate_limit || 'Profile managed' }}</p></div></div>
             <p v-if="paymentError" class="modal-error">{{ paymentError }}</p>
             <p v-if="paymentSuccess" class="field-hint">{{ paymentSuccess }}</p>
-            <p v-if="paymentProgress" class="field-hint">{{ paymentProgress }}</p>
-            <div class="modal-actions"><button type="button" class="pay-btn" :disabled="submittingPayment" @click="submitPayment"><span v-if="submittingPayment" class="btn-loader" aria-hidden="true"></span>{{ submittingPayment ? 'Processing…' : 'Submit Payment' }}<LegacyLucideIcon v-if="!submittingPayment" name="arrow-right" :size="18" /></button><button type="button" class="cancel-btn" @click="closePlanPopup">Cancel and go back</button></div>
+            <div v-if="paymentProgress" class="payment-progress" role="status" aria-live="polite">
+              <div class="payment-progress-motion" aria-hidden="true"><span></span><span></span><span></span><LegacyLucideIcon name="smartphone" :size="20" /></div>
+              <div><p class="payment-progress-title">{{ paymentButtonText }}</p><p class="payment-progress-copy">{{ paymentProgress }}</p></div>
+            </div>
+            <div class="modal-actions"><button type="button" class="pay-btn" :disabled="submittingPayment" @click="submitPayment"><span v-if="submittingPayment" class="btn-loader" aria-hidden="true"></span>{{ paymentButtonText }}<LegacyLucideIcon v-if="!submittingPayment" name="arrow-right" :size="18" /></button><button type="button" class="cancel-btn" @click="closePlanPopup">Cancel and go back</button></div>
           </div>
           <div class="modal-trust"><LegacyLucideIcon name="lock" :size="14" class="trust-icon" /><span class="trust-text">SECURE {{ (portal?.payment_provider || 'PAYMENT').toUpperCase() }} GATEWAY</span></div>
         </div>
@@ -369,6 +395,23 @@ useHead({ title: computed(() => `${portal.value?.name || 'Uzanet Hotspot'} · In
 .section-icon { color: #004cca; }
 .section-title { font-family: 'Manrope', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: -.01em; margin: 0; }
 .plan-list { display: flex; flex-direction: column; gap: 10px; }
+.plans-loading { padding: 18px; border: 1px solid #dce9ff; border-radius: 16px; background: linear-gradient(145deg,#f7faff,#eef5ff); box-shadow: 0 10px 28px rgba(15,42,94,.07); }
+.plans-loading-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.package-loader-mark { position: relative; width: 48px; height: 48px; display: grid; place-items: center; flex-shrink: 0; border-radius: 14px; background: #fff; color: #005ce6; box-shadow: 0 8px 22px rgba(0,76,202,.12); }
+.package-loader-ring { position: absolute; inset: -4px; border: 2px solid rgba(0,98,255,.28); border-radius: 17px; animation: loader-ring 1.7s ease-out infinite; }
+.plans-loading-title { margin: 0 0 3px; font-weight: 750; color: #0b1c30; }
+.plans-loading-copy { margin: 0; color: #657389; font-size: .8rem; line-height: 1.4; }
+.plan-skeleton { display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 10px; border-top: 1px solid rgba(194,211,237,.48); }
+.skeleton-icon,.skeleton-copy i,.skeleton-price { display: block; background: linear-gradient(100deg,#dce6f5 20%,#f8fbff 45%,#dce6f5 70%); background-size: 220% 100%; animation: skeleton-shimmer 1.45s ease-in-out infinite; }
+.skeleton-icon { width: 42px; height: 42px; border-radius: 11px; flex-shrink: 0; }
+.skeleton-copy { display: flex; flex: 1; flex-direction: column; gap: 8px; }
+.skeleton-copy i { height: 9px; border-radius: 999px; }
+.skeleton-copy i:first-child { width: 54%; }
+.skeleton-copy i:last-child { width: 78%; }
+.skeleton-price { width: 54px; height: 12px; border-radius: 999px; }
+.plans-empty { margin: 0; padding: 18px; border: 1px solid #dce9ff; border-radius: 12px; background: #f7faff; color: #56647a; text-align: center; font-size: .875rem; }
+@keyframes loader-ring { 0% { opacity: .8; transform: scale(.88); } 75%,100% { opacity: 0; transform: scale(1.18); } }
+@keyframes skeleton-shimmer { to { background-position-x: -220%; } }
 .plan-row { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: #fff; border: 1px solid rgba(194,198,217,.4); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.04); cursor: pointer; text-align: left; gap: 0; transition: box-shadow .15s,transform .1s; width: 100%; }
 .plan-row:hover { box-shadow: 0 6px 18px rgba(0,0,0,.08); }
 .plan-row:active { transform: scale(.98); }
@@ -431,6 +474,14 @@ useHead({ title: computed(() => `${portal.value?.name || 'Uzanet Hotspot'} · In
 .summary-label { font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #737687; margin: 0 0 2px; }
 .summary-value { font-size: .95rem; font-weight: 600; color: #0b1c30; margin: 0; }
 .modal-error { color: #ba1a1a; background: #ffdad6; border: 1px solid #ffb4ab; border-radius: 8px; padding: 10px 14px; font-size: .875rem; margin: 0; }
+.payment-progress { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid #cfe0ff; border-radius: 12px; background: linear-gradient(135deg,#f4f8ff,#edf5ff); box-shadow: inset 0 1px 0 rgba(255,255,255,.8); }
+.payment-progress-motion { position: relative; width: 44px; height: 44px; display: grid; place-items: center; flex-shrink: 0; border-radius: 13px; background: #fff; color: #005ce6; box-shadow: 0 7px 18px rgba(0,76,202,.12); }
+.payment-progress-motion span { position: absolute; inset: 4px; border: 1.5px solid rgba(0,98,255,.34); border-radius: 11px; animation: payment-wave 1.8s ease-out infinite; }
+.payment-progress-motion span:nth-child(2) { animation-delay: .38s; }
+.payment-progress-motion span:nth-child(3) { animation-delay: .76s; }
+.payment-progress-title { margin: 0 0 3px; color: #0b1c30; font-size: .875rem; font-weight: 750; }
+.payment-progress-copy { margin: 0; color: #5f6f87; font-size: .76rem; line-height: 1.45; }
+@keyframes payment-wave { 0% { opacity: .7; transform: scale(.72); } 80%,100% { opacity: 0; transform: scale(1.28); } }
 .modal-actions { display: flex; flex-direction: column; gap: 10px; }
 .pay-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 56px; background: linear-gradient(180deg,#0062ff 0%,#004cca 100%); color: #fff; border: none; border-radius: 10px; font-family: 'Manrope', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(0,76,202,.2); transition: transform .1s,box-shadow .15s; }
 .pay-btn:hover { box-shadow: 0 12px 28px rgba(0,76,202,.3); }
@@ -443,6 +494,9 @@ useHead({ title: computed(() => `${portal.value?.name || 'Uzanet Hotspot'} · In
 .trust-text { font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
 .btn-loader { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; display: inline-block; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .package-loader-ring,.skeleton-icon,.skeleton-copy i,.skeleton-price,.payment-progress-motion span,.btn-loader { animation: none; }
+}
 .modal-enter-active,.modal-leave-active { transition: opacity .2s ease; }
 .modal-enter-from,.modal-leave-to { opacity: 0; }
 .sidebar-content { padding: 48px 40px; color: #fff; display: flex; flex-direction: column; gap: 28px; width: 100%; position: relative; z-index: 1; }

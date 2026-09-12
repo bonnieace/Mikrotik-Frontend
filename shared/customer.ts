@@ -18,6 +18,15 @@ export function checkoutBody(plan: CustomerPlan, phone: string, account: string)
   return { package_uid: plan.uid, phone_number: normalizeCustomerPhone(phone), ...(plan.service_type === 'pppoe' ? { customer_reference: account.trim() } : {}) }
 }
 export function paymentIsWaiting(status: string) { return ['created', 'pending', 'paid', 'provisioning'].includes(status) }
+export function customerPaymentButton(status: string): string {
+  switch (status) {
+    case 'submitting': return 'Sending M-Pesa prompt…'
+    case 'created': return 'Preparing payment prompt…'
+    case 'pending': return 'Confirm payment on your phone'
+    case 'paid': case 'provisioning': return 'Activating your internet…'
+    default: return 'Checking payment status…'
+  }
+}
 export function customerPaymentMessage(payment: CustomerPayment): string {
   switch (payment.status) {
     case 'created': case 'pending': return 'Waiting for payment confirmation. Check the payment prompt on your phone.'

@@ -376,15 +376,15 @@ useHead({ title: computed(() => `${portal.value?.name || 'Uzanet Hotspot'} · In
 .portal-root { min-height: 100vh; background: #f8f9ff; font-family: 'Inter', sans-serif; color: #0b1c30; display: flex; flex-direction: column; }
 .portal-sidebar { display: none; }
 .portal-right-pane { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.portal-topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); border-bottom: 1px solid #f1f5f9; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
-.portal-topbar-inner { display: flex; justify-content: space-between; align-items: center; height: 64px; padding: 0 24px; max-width: 480px; margin: 0 auto; }
-.topbar-brand { display: flex; align-items: center; gap: 8px; font-family: 'Manrope', sans-serif; font-size: 1.2rem; font-weight: 800; letter-spacing: -.02em; color: #0f172a; }
+.portal-topbar { position: relative; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); border-bottom: 1px solid #f1f5f9; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+.portal-topbar-inner { display: flex; justify-content: space-between; align-items: center; height: 44px; padding: 0 16px; max-width: 480px; margin: 0 auto; }
+.topbar-brand { display: flex; align-items: center; gap: 6px; font-family: 'Manrope', sans-serif; font-size: 1rem; font-weight: 800; letter-spacing: -.02em; color: #0f172a; }
 .topbar-wifi { color: #2563eb; }
-.topbar-actions { display: flex; gap: 12px; }
+.topbar-actions { display: flex; gap: 6px; }
 .topbar-icon-btn { background: none; border: none; cursor: pointer; color: #64748b; padding: 4px; border-radius: 6px; display: flex; align-items: center; transition: color .15s; }
 .topbar-icon-btn:hover { color: #2563eb; }
 .portal-scroll-pane { flex: 1; display: flex; flex-direction: column; }
-.portal-content-inner { padding: 88px 24px 48px; max-width: 480px; margin: 0 auto; width: 100%; box-sizing: border-box; flex: 1; }
+.portal-content-inner { padding: 24px 24px 48px; max-width: 480px; margin: 0 auto; width: 100%; box-sizing: border-box; flex: 1; }
 .hero-banner { margin-bottom: 32px; border-radius: 12px; overflow: hidden; height: 160px; position: relative; display: flex; align-items: flex-end; padding: 24px; background: linear-gradient(135deg,#0f2a5e 0%,#0a4a6e 40%,#0d7a8e 70%,#0b6a7a 100%); }
 .hero-banner::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 40%,rgba(56,189,248,.3) 0%,transparent 70%),radial-gradient(ellipse at 20% 80%,rgba(37,99,235,.2) 0%,transparent 60%); }
 .hero-text { position: relative; z-index: 1; color: #fff; }
@@ -515,8 +515,7 @@ useHead({ title: computed(() => `${portal.value?.name || 'Uzanet Hotspot'} · In
   .portal-sidebar { display: flex; flex: 1; min-width: 0; background: linear-gradient(160deg,#0f2a5e 0%,#0a4a6e 50%,#0d7a8e 100%); align-items: center; justify-content: center; position: relative; overflow: hidden; }
   .portal-sidebar::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 25%,rgba(56,189,248,.25) 0%,transparent 60%),radial-gradient(ellipse at 25% 75%,rgba(37,99,235,.2) 0%,transparent 55%); pointer-events: none; }
   .portal-right-pane { flex: 1; min-width: 0; overflow: hidden; }
-  .portal-topbar { position: relative; top: auto; left: auto; right: auto; }
-  .portal-topbar-inner { max-width: none; padding: 0 48px; }
+  .portal-topbar-inner { max-width: none; padding: 0 32px; }
   .portal-scroll-pane { flex: 1; overflow-y: auto; min-height: 0; }
   .portal-content-inner { padding: 48px 64px; max-width: 620px; margin: 0 auto; }
   .hero-banner { display: none; }

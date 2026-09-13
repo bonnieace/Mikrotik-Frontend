@@ -42,6 +42,7 @@ export default defineEventHandler((event) => {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="cache-control" content="no-store">
+  <meta name="uzanet-managed-portal" content="1">
   <meta http-equiv="refresh" content="0;url=${safeUrl}">
   <title>Connecting to Uzanet</title>
   <style>

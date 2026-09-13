@@ -50,7 +50,7 @@
       <div class="panel-heading">
         <div>
           <h2>Connected Hardware</h2>
-          <p class="muted">Select a router to manage its customers, plans and billing.</p>
+          <p class="muted">Select a router to manage its customers, plans and billing. Use the sync action after captive portal design or branding changes.</p>
         </div>
         <span class="badge">{{ routers.length }} routers</span>
       </div>
@@ -139,6 +139,16 @@
             >
               <span class="material-symbols-outlined text-[18px]" aria-hidden="true"
                 >lan</span
+              ></button
+            ><button
+              class="ghost"
+              :disabled="busy || !row.portal_enabled"
+              :aria-label="'Refresh ' + row.name + ' captive portal'"
+              :title="row.portal_enabled ? 'Refresh managed captive portal' : 'Enable the customer portal before refreshing'"
+              @click="refreshPortal(row)"
+            >
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true"
+                >sync</span
               ></button
             ><button
               class="ghost"
@@ -480,6 +490,36 @@ async function remove(router: Router) {
       await fetchRouters()
     },
     'Router removed.',
+  )
+}
+async function refreshPortal(router: Router) {
+  if (
+    !window.confirm(
+      'Refresh the Uzanet-managed captive portal on ' +
+        router.name +
+        '? This replaces only its managed login.html and keeps the backup and RouterOS configuration untouched.',
+    )
+  )
+    return
+  statusMessage.value = ''
+  await run(
+    () =>
+      api<{ files_updated: number; template_version: number }>(
+        'routers/' + router.uid + '/portal/refresh',
+        { method: 'POST' },
+      ),
+    (result) => {
+      statusMessage.value =
+        router.name +
+        ': captive portal template v' +
+        result.template_version +
+        ' refreshed on ' +
+        result.files_updated +
+        ' managed page' +
+        (result.files_updated === 1 ? '' : 's') +
+        '.'
+    },
+    'Captive portal refreshed.',
   )
 }
 async function check(router: Router) {

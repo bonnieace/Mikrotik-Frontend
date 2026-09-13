@@ -4,6 +4,7 @@ const rules: [string, RegExp][] = [
   ['PATCH|DELETE', new RegExp('^routers/' + UUID + '$')],
   ['GET', new RegExp('^routers/' + UUID + '/(?:status|active-users|traffic|payments|payment-sessions|logs|packages|hotspot-users|pppoe-users)$')],
   ['POST', new RegExp('^routers/' + UUID + '/(?:packages|hotspot-users|pppoe-users)$')],
+  ['POST', new RegExp('^routers/' + UUID + '/portal/refresh$')],
   ['PATCH|DELETE', new RegExp('^routers/' + UUID + '/packages/' + UUID + '$')],
   ['DELETE', new RegExp('^routers/' + UUID + '/(?:hotspot-users|pppoe-users)/' + UUID + '$')],
   ['POST', new RegExp('^routers/' + UUID + '/(?:hotspot-users|pppoe-users)/' + UUID + '/(?:enable|disable)$')],
@@ -45,6 +46,11 @@ export function safeError(status: number, detail: unknown): string {
     'Router returned no traffic data',
     'Router returned no interfaces',
     'Router returned no usable interface',
+    'Router has no enabled HotSpot server',
+    'No Uzanet-managed HotSpot login page was found',
+    'Router rejected captive portal refresh',
+    'Enable the customer portal before refreshing it',
+    'Router has no ISP portal identity',
   ])
   if (typeof detail === 'string' && operational.has(detail)) return detail
   const known = new Set(['Account is disabled', 'Account temporarily locked. Try again later', 'Incorrect username or password', 'Current password is incorrect', 'Superadmin access required', 'Package is inactive', 'Package not found', 'Router connection failed', 'Router operation timed out', 'A package with this name already exists', 'Hotspot username already exists', 'PPPoE username already exists on this router'])

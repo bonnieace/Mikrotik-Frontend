@@ -8,6 +8,7 @@ test('only supported UUID-based operator routes are available', () => {
     ['GET', 'routers'], ['POST', 'routers/onboarding'], ['PATCH', 'routers/' + uid],
     ['GET', 'routers/' + uid + '/status'], ['GET', 'routers/' + uid + '/active-users'],
     ['GET', 'routers/' + uid + '/traffic'],
+    ['POST', 'routers/' + uid + '/portal/refresh'],
     ['POST', 'routers/' + uid + '/packages'], ['PATCH', 'routers/' + uid + '/packages/' + uid],
     ['POST', 'routers/' + uid + '/hotspot-users/' + uid + '/disable'],
     ['DELETE', 'routers/' + uid + '/pppoe-users/' + uid],
@@ -38,6 +39,7 @@ test('errors retain actionable known messages but never reflect validation input
   assert.equal(safeError(429, 'Account temporarily locked. Try again later'), 'Account temporarily locked. Try again later')
   assert.equal(safeError(502, 'Router traffic monitoring failed'), 'Router traffic monitoring failed')
   assert.equal(safeError(503, 'Router is unreachable'), 'Router is unreachable')
+  assert.equal(safeError(409, 'No Uzanet-managed HotSpot login page was found'), 'No Uzanet-managed HotSpot login page was found')
   assert.ok(!safeError(500, 'mysql://root:secret@db').includes('secret'))
   assert.ok(!safeError(422, [{ input: 'secret' }]).includes('secret'))
   assert.equal(safeError(503, 'VPN provisioning agent is unavailable'), 'VPN provisioning agent is unavailable')

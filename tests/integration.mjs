@@ -129,6 +129,21 @@ test('production BFF authentication, CSRF, proxy, error and cookie boundaries', 
       assert.equal(requests.at(-1).url, '/api/v1/routers/' + uid + '/' + suffix)
     }
   })
+  await t.test('managed portal refresh forwards explicit JSON exactly once', async () => {
+    const count = requests.length
+    const path = '/api/backend/routers/' + uid + '/portal/refresh'
+    const result = await request(path, {
+      method: 'POST',
+      headers: { ...headers, Cookie: cookie },
+      body: '{}',
+    })
+    assert.equal(result.status, 200)
+    assert.equal(requests.length, count + 1)
+    assert.equal(requests.at(-1).url, '/api/v1/routers/' + uid + '/portal/refresh')
+    assert.equal(requests.at(-1).method, 'POST')
+    assert.equal(requests.at(-1).headers.authorization, 'Bearer ' + fakeToken)
+    assert.equal(requests.at(-1).body, '{}')
+  })
   await t.test('unsupported endpoints, methods and query strings never reach the backend', async () => {
     const count = requests.length
     for (const path of ['routers?password=secret', 'routers/1/packages', 'users', 'jobs/expire-access', 'https://evil.test', 'public/portals/test/payments']) {

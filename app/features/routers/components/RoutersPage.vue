@@ -506,7 +506,7 @@ async function refreshPortal(router: Router) {
     () =>
       api<{ files_updated: number; template_version: number }>(
         'routers/' + router.uid + '/portal/refresh',
-        { method: 'POST' },
+        { method: 'POST', body: {} },
       ),
     (result) => {
       statusMessage.value =

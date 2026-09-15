@@ -13,7 +13,7 @@ export function useAuth() {
   }
   async function register(username: string, email: string, password: string) {
     resetSession()
-    user.value = await $fetch<Operator>('/api/auth/register', { method: 'POST', body: { username, email, password }, headers: { 'X-Portal-Request': '1' }, retry: 0, timeout: 40000 })
+    user.value = await $fetch<Operator>('/api/onboarding/register', { method: 'POST', body: { username, email, password }, headers: { 'X-Portal-Request': '1' }, retry: 0, timeout: 40000 })
   }
   async function logout() {
     let warning = ''

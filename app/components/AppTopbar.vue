@@ -90,9 +90,9 @@
       <NuxtLink
         to="/settings"
         class="operator-avatar"
-        :aria-label="'Account settings for ' + (user?.username || 'operator')"
-        :title="user?.username"
-        >{{ user?.username?.slice(0, 2).toUpperCase() || 'OP' }}</NuxtLink
+        :aria-label="'Account settings for ' + operatorName"
+        :title="operatorName"
+        >{{ operatorName.slice(0, 2).toUpperCase() }}</NuxtLink
       >
     </div>
   </header>
@@ -103,6 +103,7 @@
 <script setup lang="ts">
 import type { Router } from '~~/shared/types'
 const { user } = useAuth()
+const operatorName = computed(() => user.value?.isp_name || user.value?.username || 'Operator')
 const route = useRoute()
 const sidebarOpen = useState('mobile-sidebar-open', () => false)
 const { routers, activeRouter, loading, error, fetchRouters, setActiveRouter } = useRouterStore()

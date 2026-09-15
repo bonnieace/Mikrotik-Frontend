@@ -35,7 +35,7 @@ function validationMessage(detail: unknown): string | null {
     const msg = (item as { msg?: unknown }).msg
     if (typeof msg !== 'string') continue
     const cleaned = msg.replace(/^Value error,\s*/i, '').trim()
-    if (/^[A-Za-z0-9][A-Za-z0-9 ,.'’():/\-]{0,160}$/.test(cleaned)) return cleaned
+    if (/^[A-Za-z0-9][A-Za-z0-9 ,.'’():/-]{0,160}$/.test(cleaned)) return cleaned
   }
   return null
 }

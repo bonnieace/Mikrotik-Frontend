@@ -34,7 +34,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return
   }
 
-  if (to.path === '/login' || to.path === '/signup') return
+  if (to.path === '/login' || to.path === '/signup' || to.path === '/verify-email') return
   const auth = useAuth()
   const resetSession = useSessionReset()
   try { await auth.checkSession() }

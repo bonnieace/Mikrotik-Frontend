@@ -1,4 +1,4 @@
-export interface Operator { id: number; username: string; email: string | null; role: string }
+export interface Operator { id: number; username: string; isp_name?: string | null; email: string | null; role: string }
 export interface Router { uid: string; name: string; ip_address: string; port: number; username: string; isp_identifier: string | null; portal_slug: string; portal_path: string; portal_enabled: boolean; payment_provider: string; connection_mode: string; onboarding_status: string; last_seen_at: string | null; last_error: string | null }
 export interface Plan { uid: string; name: string; description: string | null; price: number | string; service_type: 'hotspot' | 'pppoe'; validity_minutes: number; router_profile: string; rate_limit: string | null; is_active: boolean }
 export interface Customer { uid: string; name?: string; username?: string; pppoe_username?: string; phone_number?: string; mobile_number?: string; is_active: boolean; expires_at?: string | null; expires_on?: string | null; profile?: string; credentials?: { username: string; password: string } }

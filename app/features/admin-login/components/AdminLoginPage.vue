@@ -4,18 +4,12 @@
   DO NOT redesign. Pixel-perfect match required.
 -->
 <template>
-  <!-- body: bg-surface font-body-md text-on-surface antialiased min-h-screen flex items-center justify-center relative overflow-hidden -->
   <div class="bg-surface font-body-md text-on-surface antialiased min-h-screen flex items-center justify-center relative overflow-hidden">
-
-    <!-- Technical Background -->
     <div class="absolute inset-0 technical-grid opacity-30 z-0"></div>
     <div class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-secondary-fixed-dim/20 rounded-full blur-3xl z-0"></div>
     <div class="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-primary-fixed/20 rounded-full blur-3xl z-0"></div>
 
-    <!-- Login Shell -->
     <main class="relative z-10 w-full max-w-[420px] px-6">
-
-      <!-- Brand Header -->
       <div class="text-center mb-xl">
         <div class="inline-flex items-center justify-center w-16 h-16 bg-primary text-on-primary rounded-xl mb-md shadow-sm">
           <span class="material-symbols-outlined text-display" data-icon="router">router</span>
@@ -24,13 +18,10 @@
         <p class="font-body-md text-on-surface-variant mt-xs">Infrastructure Management Console</p>
       </div>
 
-      <!-- Login Card -->
       <div class="bg-white border border-outline-variant p-xl rounded-lg shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         <form class="space-y-lg" @submit.prevent="handleLogin">
-
-          <!-- Field: Identifier -->
           <div class="space-y-xs">
-            <label class="font-table-header text-table-header text-outline block uppercase tracking-wider" for="admin-id">Operator username</label>
+            <label class="font-table-header text-table-header text-outline block uppercase tracking-wider" for="admin-id">Email or operator username</label>
             <div class="relative group">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="material-symbols-outlined text-outline group-focus-within:text-secondary transition-colors" data-icon="account_circle">account_circle</span>
@@ -40,7 +31,7 @@
                 v-model="form.identifier"
                 class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-md font-body-md text-on-surface focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-all outline-none"
                 name="admin-id"
-                placeholder="Your username"
+                placeholder="owner@example.com"
                 autocomplete="username"
                 required
                 type="text"
@@ -48,7 +39,6 @@
             </div>
           </div>
 
-          <!-- Field: Password -->
           <div class="space-y-xs">
             <div class="flex justify-between items-center">
               <label class="font-table-header text-table-header text-outline block uppercase tracking-wider" for="admin-password">Secure Password</label>
@@ -80,10 +70,8 @@
             </div>
           </div>
 
-          <p class="font-body-sm text-on-surface-variant">For access or a password reset, contact your system administrator.</p>
           <p v-if="error" class="text-red-700 text-sm" role="alert">{{ error }}</p>
 
-          <!-- Action -->
           <button
             :disabled="loading"
             class="w-full bg-primary text-on-primary py-3 px-4 rounded-md font-h3 text-h3 hover:bg-on-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
@@ -95,7 +83,6 @@
               <span class="material-symbols-outlined text-body-lg" data-icon="arrow_forward">arrow_forward</span>
             </template>
           </button>
-
         </form>
       </div>
 
@@ -120,7 +107,13 @@ const form = reactive({
 
 function destinationAfterLogin() {
   const next = typeof route.query.next === 'string' ? route.query.next : ''
-  if (next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/login')) return next
+  if (
+    next.startsWith('/') &&
+    !next.startsWith('//') &&
+    !next.startsWith('/login') &&
+    !next.startsWith('/signup') &&
+    !next.startsWith('/verify-email')
+  ) return next
   return '/dashboard'
 }
 
@@ -129,7 +122,7 @@ async function handleLogin() {
   error.value = ''
   loading.value = true
   try {
-    await login(form.identifier, form.password)
+    await login(form.identifier.trim(), form.password)
     snackbar.show('Authenticated successfully', 'success')
     await navigateTo(destinationAfterLogin())
   } catch (err: unknown) {

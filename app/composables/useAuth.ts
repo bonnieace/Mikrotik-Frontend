@@ -11,6 +11,10 @@ export function useAuth() {
     resetSession()
     user.value = await $fetch<Operator>('/api/auth/login', { method: 'POST', body: { username, password }, headers: { 'X-Portal-Request': '1' }, retry: 0, timeout: 40000 })
   }
+  async function register(username: string, email: string, password: string) {
+    resetSession()
+    user.value = await $fetch<Operator>('/api/onboarding/register', { method: 'POST', body: { username, email, password }, headers: { 'X-Portal-Request': '1' }, retry: 0, timeout: 40000 })
+  }
   async function logout() {
     let warning = ''
     try { await $fetch('/api/auth/logout', { method: 'POST', headers: { 'X-Portal-Request': '1' }, retry: 0, timeout: 40000 }) }
@@ -18,5 +22,5 @@ export function useAuth() {
     finally { resetSession(); await navigateTo('/login') }
     if (warning) snackbar.show(warning, 'warning', 0)
   }
-  return { user, isAuthenticated, login, logout, checkSession }
+  return { user, isAuthenticated, login, register, logout, checkSession }
 }

@@ -34,13 +34,16 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return
   }
 
-  if (to.path === '/login') return
+  if (to.path === '/login' || to.path === '/signup') return
   const auth = useAuth()
   const resetSession = useSessionReset()
   try { await auth.checkSession() }
   catch (error) {
     const status = (error as { statusCode?: number }).statusCode
     resetSession()
+    if (status === 401 && to.path === '/onboard') {
+      return navigateTo({ path: '/signup', query: { next: to.fullPath } })
+    }
     if (status !== 401) useSnackbar().show('Unable to verify your session. Try signing in when the backend is available.', 'warning')
     return navigateTo({ path: '/login', query: { next: to.fullPath } })
   }

@@ -9,9 +9,9 @@
     <div class="settings-layout">
       <aside class="panel account-card">
         <div class="account-avatar">
-          {{ user?.username?.slice(0, 2).toUpperCase() }}
+          {{ displayName.slice(0, 2).toUpperCase() }}
         </div>
-        <h2>{{ user?.username }}</h2>
+        <h2>{{ displayName }}</h2>
         <p class="muted">{{ user?.email || 'Operator account' }}</p>
         <span class="badge blue">{{ user?.role }}</span>
         <div class="settings-section">
@@ -63,6 +63,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'app' })
 const { user } = useAuth()
+const displayName = computed(() => user.value?.isp_name || user.value?.username || 'Operator')
 const api = useApi()
 const resetSession = useSessionReset()
 const snackbar = useSnackbar()

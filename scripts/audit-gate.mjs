@@ -2,11 +2,11 @@ import { spawnSync } from 'node:child_process'
 
 const accepted = new Map([
   [
-    'GHSA-vfj7-8cjw-p6xm',
+    'GHSA-VFJ7-8CJW-P6XM',
     'braces <=3.0.3: no patched release exists upstream; accept temporarily while upstream/dependency chains migrate away.',
   ],
   [
-    'GHSA-86w9-cpqp-85rv',
+    'GHSA-86W9-CPQP-85RV',
     'node-forge <=1.4.0: no patched release exists upstream; npm --force would require a breaking Nuxt downgrade rather than a patched node-forge.',
   ],
 ])

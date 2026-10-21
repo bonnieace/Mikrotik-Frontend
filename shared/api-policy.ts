@@ -28,6 +28,17 @@ export function upstreamBase(value: string): string {
   }
   return value.replace(/\/$/, '')
 }
+function validationMessage(detail: unknown): string | null {
+  if (!Array.isArray(detail)) return null
+  for (const item of detail) {
+    if (!item || typeof item !== 'object') continue
+    const msg = (item as { msg?: unknown }).msg
+    if (typeof msg !== 'string') continue
+    const cleaned = msg.replace(/^Value error,\s*/i, '').trim()
+    if (/^[A-Za-z0-9][A-Za-z0-9 ,.'’():/-]{0,160}$/.test(cleaned)) return cleaned
+  }
+  return null
+}
 export function safeError(status: number, detail: unknown): string {
   if (detail === 'Retire packages before deleting this router') return 'This router has package records and cannot currently be deleted. Keep it registered until its dependencies are resolved in the backend.'
   const operational = new Set([
@@ -53,8 +64,32 @@ export function safeError(status: number, detail: unknown): string {
     'Router has no ISP portal identity',
   ])
   if (typeof detail === 'string' && operational.has(detail)) return detail
-  const known = new Set(['Account is disabled', 'Account temporarily locked. Try again later', 'Incorrect username or password', 'Current password is incorrect', 'Superadmin access required', 'Package is inactive', 'Package not found', 'Router connection failed', 'Router operation timed out', 'A package with this name already exists', 'Hotspot username already exists', 'PPPoE username already exists on this router'])
+  const known = new Set([
+    'Account is disabled',
+    'Account temporarily locked. Try again later',
+    'Incorrect username or password',
+    'Incorrect email, username or password',
+    'Verify your email before signing in',
+    'Current password is incorrect',
+    'Superadmin access required',
+    'An account with this email already exists',
+    'Enter an ISP name containing letters or numbers',
+    'This verification link is invalid or has expired',
+    'A verification email was sent recently. Try again shortly',
+    'Verification email could not be sent. Try again later',
+    'Package is inactive',
+    'Package not found',
+    'Router connection failed',
+    'Router operation timed out',
+    'A package with this name already exists',
+    'Hotspot username already exists',
+    'PPPoE username already exists on this router',
+  ])
   if (typeof detail === 'string' && known.has(detail)) return detail
+  if (status === 422 || status === 400) {
+    const validation = validationMessage(detail)
+    if (validation) return validation
+  }
   if (status === 401) return 'Your session has expired. Please sign in again.'
   if (status === 403) return 'Your account cannot perform this action.'
   if (status === 404) return 'This record is no longer available.'

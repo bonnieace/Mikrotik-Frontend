@@ -34,12 +34,17 @@ test('upstream config cannot contain credentials, query parameters or an unencry
   assert.equal(upstreamBase('http://localhost:9000/api/v1'), 'http://localhost:9000/api/v1')
   for (const value of ['http://api.example/api/v1', 'https://user:secret@api.example/api/v1', 'https://api.example/token', 'https://api.example/api/v1?key=secret', 'https://api.example/api/v1#secret']) assert.throws(() => upstreamBase(value))
 })
-test('errors retain actionable known messages but never reflect validation inputs or internal exceptions', () => {
+test('errors retain actionable known messages and safe validation text without reflecting inputs', () => {
   assert.equal(safeError(403, 'Account is disabled'), 'Account is disabled')
+  assert.equal(safeError(403, 'Verify your email before signing in'), 'Verify your email before signing in')
+  assert.equal(safeError(409, 'An account with this email already exists'), 'An account with this email already exists')
+  assert.equal(safeError(429, 'A verification email was sent recently. Try again shortly'), 'A verification email was sent recently. Try again shortly')
   assert.equal(safeError(429, 'Account temporarily locked. Try again later'), 'Account temporarily locked. Try again later')
   assert.equal(safeError(502, 'Router traffic monitoring failed'), 'Router traffic monitoring failed')
   assert.equal(safeError(503, 'Router is unreachable'), 'Router is unreachable')
   assert.equal(safeError(409, 'No Uzanet-managed HotSpot login page was found'), 'No Uzanet-managed HotSpot login page was found')
+  assert.equal(safeError(422, [{ msg: 'String should have at least 12 characters', input: 'secret' }]), 'String should have at least 12 characters')
+  assert.equal(safeError(422, [{ msg: 'Value error, enter a valid email address', input: 'secret' }]), 'enter a valid email address')
   assert.ok(!safeError(500, 'mysql://root:secret@db').includes('secret'))
   assert.ok(!safeError(422, [{ input: 'secret' }]).includes('secret'))
   assert.equal(safeError(503, 'VPN provisioning agent is unavailable'), 'VPN provisioning agent is unavailable')

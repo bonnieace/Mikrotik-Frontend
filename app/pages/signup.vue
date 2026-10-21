@@ -10,26 +10,24 @@
           <span class="material-symbols-outlined text-display" data-icon="router">router</span>
         </div>
         <h1 class="font-display text-display text-primary tracking-tighter">Create your Uzanet ISP</h1>
-        <p class="font-body-md text-on-surface-variant mt-xs">Create the operator account, then connect your first MikroTik.</p>
+        <p class="font-body-md text-on-surface-variant mt-xs">Create your operator account, verify your email, then connect your first MikroTik.</p>
       </div>
 
       <div class="bg-white border border-outline-variant p-xl rounded-lg shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         <form class="space-y-lg" @submit.prevent="handleSignup">
           <div class="space-y-xs">
-            <label class="font-table-header text-table-header text-outline block uppercase tracking-wider" for="isp-id">ISP identifier</label>
+            <label class="font-table-header text-table-header text-outline block uppercase tracking-wider" for="isp-name">ISP name</label>
             <input
-              id="isp-id"
-              v-model="form.username"
+              id="isp-name"
+              v-model="form.ispName"
               class="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-md font-body-md text-on-surface focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-all outline-none"
-              name="isp-id"
-              placeholder="example-net"
-              autocomplete="username"
-              minlength="3"
-              maxlength="60"
-              pattern="[a-z0-9][a-z0-9-]*[a-z0-9]"
+              name="isp-name"
+              placeholder="Fast Connect ISP"
+              autocomplete="organization"
+              minlength="2"
+              maxlength="125"
               required
             />
-            <p class="font-body-sm text-on-surface-variant">Lowercase letters, numbers and hyphens. This becomes the stable identifier in your customer portal links.</p>
           </div>
 
           <div class="space-y-xs">
@@ -107,15 +105,20 @@ definePageMeta({ layout: 'auth' })
 useHead({ title: 'Create ISP Account — Uzanet' })
 
 const { register } = useAuth()
-const snackbar = useSnackbar()
 const route = useRoute()
 const loading = ref(false)
 const error = ref('')
-const form = reactive({ username: '', email: '', password: '', confirm: '' })
+const form = reactive({ ispName: '', email: '', password: '', confirm: '' })
 
 const nextPath = computed(() => {
   const next = typeof route.query.next === 'string' ? route.query.next : ''
-  if (next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/login') && !next.startsWith('/signup')) return next
+  if (
+    next.startsWith('/') &&
+    !next.startsWith('//') &&
+    !next.startsWith('/login') &&
+    !next.startsWith('/signup') &&
+    !next.startsWith('/verify-email')
+  ) return next
   return '/onboard'
 })
 const loginDestination = computed(() => ({ path: '/login', query: { next: nextPath.value } }))
@@ -123,16 +126,17 @@ const loginDestination = computed(() => ({ path: '/login', query: { next: nextPa
 async function handleSignup() {
   if (loading.value) return
   error.value = ''
-  const username = form.username.trim().toLowerCase()
   if (form.password !== form.confirm) {
     error.value = 'The passwords do not match.'
     return
   }
   loading.value = true
   try {
-    await register(username, form.email.trim().toLowerCase(), form.password)
-    snackbar.show('ISP account created. Connect your first MikroTik.', 'success')
-    await navigateTo(nextPath.value)
+    const result = await register(form.ispName.trim(), form.email.trim().toLowerCase(), form.password)
+    await navigateTo({
+      path: '/verify-email',
+      query: { email: result.email, next: nextPath.value },
+    })
   } catch (err: unknown) {
     error.value = apiError(err)
   } finally {

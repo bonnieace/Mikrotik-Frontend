@@ -20,5 +20,5 @@ test('login only accepts local return paths and otherwise falls back to dashboar
 test('marketing onboarding route creates guided router onboarding through the existing API', () => {
   assert.match(onboard, /api<Onboarding>\('routers\/onboarding'/)
   assert.match(onboard, /Generate setup command/)
-  assert.match(onboard, /Copy setup command/)
+  assert.match(onboard, /Copy\s+setup\s+command/)
 })
